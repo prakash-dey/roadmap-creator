@@ -1,0 +1,7 @@
+-- CreateEnum
+CREATE TYPE "DayStatus" AS ENUM ('PENDING', 'CONFIRMED', 'MISSED', 'RECOVERED');
+
+-- AlterTable
+ALTER TABLE "Day" ALTER COLUMN "status" DROP DEFAULT;
+ALTER TABLE "Day" ALTER COLUMN "status" TYPE "DayStatus" USING ("status"::"DayStatus");
+ALTER TABLE "Day" ALTER COLUMN "status" SET DEFAULT 'PENDING';

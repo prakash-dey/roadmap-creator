@@ -4,16 +4,24 @@ A 12-week interview prep tracker: a "trail" visualization of progress
 against calendar pace, daily check-ins, and coverage across DSA, LLD,
 HLD, mock interviews and review.
 
-Built with Next.js (App Router), TypeScript, Tailwind CSS, and Prisma
-+ SQLite.
+Built with Next.js (App Router), TypeScript, Tailwind CSS, Prisma,
+Neon Postgres, and Neon Auth.
 
 ## Getting started
 
 ```bash
 npm install
+npx neon env pull
 npm run db:seed   # generates the 12-week program + demo history
 npm run dev
 ```
+
+The workspace is linked to its Neon project through `.neon`. Runtime
+queries use the pooled `DATABASE_URL`; Prisma migrations use
+`DATABASE_URL_UNPOOLED`. Neon-managed values live in the ignored `.env`
+file. Deployments must also define `DATABASE_URL`,
+`DATABASE_URL_UNPOOLED`, `NEON_AUTH_BASE_URL`, `NEON_AUTH_JWKS_URL`, and a
+private `NEON_AUTH_COOKIE_SECRET` of at least 32 characters.
 
 Open http://localhost:3000.
 

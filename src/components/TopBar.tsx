@@ -21,12 +21,12 @@ export function TopBar({
           {subtitle}
         </div>
       </div>
-      <div className="flex items-center gap-5 sm:gap-7">
-        <div className="font-mono text-[12px] tracking-[0.1em]" style={{ color: "var(--muted)" }}>
+      <div className="flex flex-wrap items-center gap-3 sm:gap-7">
+        <div className="whitespace-nowrap font-mono text-[11px] sm:text-[12px] tracking-[0.08em] sm:tracking-[0.1em]" style={{ color: "var(--muted)" }}>
           {startLabel} → {endLabel}
         </div>
         <div
-          className="font-mono text-[12px] tracking-[0.1em] px-3 py-1.5"
+          className="whitespace-nowrap font-mono text-[11px] sm:text-[12px] tracking-[0.1em] px-3 py-1.5"
           style={{ color: "var(--amber)", border: "1px solid rgba(245,165,36,.4)" }}
         >
           WEEK {String(weekNumber).padStart(2, "0")} / {totalWeeks}

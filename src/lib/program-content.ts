@@ -235,7 +235,7 @@ const FALLBACK_PALETTE: string[] = [
   "#4ADE80", "#FB923C", "#38BDF8", "#F472B6", "#C084FC",
 ];
 
-/** Legacy export kept for the demo seed pool, which only uses known categories. */
+/** Stable palette for the built-in interview-prep categories. */
 export const CATEGORY_COLOR = KNOWN_CATEGORY_COLOR;
 
 export function colorForCategory(category: string): string {

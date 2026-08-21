@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { importRoadmapFile, resetDemoProgram, type ImportRoadmapState } from "@/app/actions";
+import { importRoadmapFile, type ImportRoadmapState } from "@/app/actions";
 import { CornerTicks } from "@/components/CornerTicks";
 
 const initialState: ImportRoadmapState = {};
@@ -13,12 +13,12 @@ export function ImportRoadmapForm() {
     <div className="flex flex-col gap-8 w-full max-w-[560px]">
       <div className="flex flex-col gap-2">
         <div className="font-mono text-[11px] tracking-[0.16em]" style={{ color: "var(--amber)" }}>
-          BUILD YOUR OWN ROADMAP
+          CREATE ANOTHER ROADMAP
         </div>
         <div className="font-serif text-[26px] leading-tight">Import a roadmap</div>
         <div className="text-[13px] leading-relaxed" style={{ color: "var(--muted)" }}>
           Download a template, fill in your own weeks and tasks — any category labels you like, with
-          optional links — and upload it here. This replaces whatever roadmap is currently loaded.
+          optional links — and upload it here. Existing roadmaps stay untouched.
         </div>
       </div>
 
@@ -74,20 +74,6 @@ export function ImportRoadmapForm() {
         </div>
       </form>
 
-      <div className="flex flex-col gap-3 pt-4" style={{ borderTop: "1px solid var(--border)" }}>
-        <div className="font-mono text-[10px] tracking-[0.16em]" style={{ color: "var(--muted-2)" }}>
-          OR
-        </div>
-        <form action={resetDemoProgram}>
-          <button
-            type="submit"
-            className="font-mono text-[11px] tracking-[0.12em] px-4 py-2.5 cursor-pointer bg-transparent transition-colors"
-            style={{ border: "1px solid var(--border-strong)", color: "var(--muted)" }}
-          >
-            RESET TO DEMO PROGRAM
-          </button>
-        </form>
-      </div>
     </div>
   );
 }

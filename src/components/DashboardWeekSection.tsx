@@ -36,7 +36,7 @@ export function DashboardWeekSection({
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-px" style={{ background: "var(--border)", borderTop: "1px solid var(--border)" }}>
-      <div className="bg-[var(--panel)] px-6 sm:px-10 py-7 flex flex-col gap-4.5">
+      <div className="min-w-0 bg-[var(--panel)] px-4 sm:px-10 py-7 flex flex-col gap-4.5">
         <div className="flex flex-wrap items-baseline justify-between gap-3">
           <div className="flex items-baseline gap-3">
             <div className="font-serif text-[20px]">Week {String(weekNumber).padStart(2, "0")}</div>

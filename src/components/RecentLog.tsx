@@ -26,14 +26,14 @@ export function RecentLog({ entries }: { entries: RecentLogEntryVM[] }) {
           </div>
         )}
         {entries.map((e) => (
-          <div key={e.dateKey} className="flex items-center gap-3 bg-[var(--panel)] px-0.5 py-2.5">
+          <div key={e.dateKey} className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 bg-[var(--panel)] px-0.5 py-2.5 sm:flex-nowrap">
             <span className="font-mono text-[11px] w-[56px]" style={{ color: "var(--faint)" }}>
               {e.dateLabel}
             </span>
-            <span className="text-[12px] flex-1" style={{ color: "var(--text-dim)" }}>
+            <span className="min-w-0 flex-1 text-[12px]" style={{ color: "var(--text-dim)" }}>
               {e.summary}
             </span>
-            <span className="font-mono text-[10px] tracking-[0.1em]" style={{ color: STATUS_COLOR[e.status] }}>
+            <span className="ml-[68px] font-mono text-[10px] tracking-[0.1em] sm:ml-0" style={{ color: STATUS_COLOR[e.status] }}>
               {STATUS_LABEL[e.status]}
             </span>
           </div>

@@ -18,7 +18,7 @@ export function WeekGrid({
   onSelect: (dateKey: string) => void;
 }) {
   return (
-    <div className="grid grid-cols-4 sm:grid-cols-7 gap-2.5">
+    <div className="grid grid-cols-2 min-[480px]:grid-cols-4 md:grid-cols-7 gap-2.5">
       {days.map((day) => {
         const chip = statusChip(day);
         const isSelected = day.dateKey === selectedDateKey;
@@ -29,7 +29,7 @@ export function WeekGrid({
             key={day.dateKey}
             type="button"
             onClick={() => onSelect(day.dateKey)}
-            className="relative flex flex-col gap-3.5 p-3 pb-3 min-h-[150px] text-left transition-colors hover:brightness-110 cursor-pointer"
+            className="relative flex min-w-0 flex-col gap-3 p-3 min-h-[132px] sm:min-h-[150px] text-left transition-colors hover:brightness-110 cursor-pointer"
             style={{
               border: `1px solid ${isSelected ? "var(--amber)" : isLapsed ? "#3a2523" : "var(--border-strong)"}`,
               background: isSelected ? "#1b1a1a" : isLapsed ? "#171319" : "var(--panel)",
@@ -49,7 +49,7 @@ export function WeekGrid({
               ))}
             </div>
             <div
-              className="mt-auto flex items-center gap-1.5 font-mono text-[10px] tracking-[0.1em] whitespace-nowrap"
+              className="mt-auto flex items-center gap-1.5 font-mono text-[9px] sm:text-[10px] tracking-[0.08em] sm:tracking-[0.1em] whitespace-nowrap"
               style={{ color: chip.color }}
             >
               {chip.icon && <span className="text-[12px]">{chip.icon}</span>}

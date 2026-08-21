@@ -1,69 +1,106 @@
-import Image from "next/image";
+import Link from "next/link";
+import { getProgramView } from "@/lib/data";
+import { TopBar } from "@/components/TopBar";
+import { DesktopTrail, MobileTrail } from "@/components/TrailSvg";
+import { StatsStrip } from "@/components/StatsStrip";
+import { DashboardWeekSection } from "@/components/DashboardWeekSection";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const p = await getProgramView();
+
+  const behindDays = p.paceDays < 0 ? -p.paceDays : 0;
+  const aheadDays = p.paceDays > 0 ? p.paceDays : 0;
+  const paceHeadline =
+    p.paceDays < 0
+      ? `You are ${behindDays} day${behindDays === 1 ? "" : "s"} short of where the calendar puts you.`
+      : p.paceDays > 0
+        ? `You are ${aheadDays} day${aheadDays === 1 ? "" : "s"} ahead of where the calendar puts you.`
+        : "You are exactly on pace with the calendar.";
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div className="min-h-screen" style={{ background: "var(--bg)" }}>
+      <TopBar
+        title={p.programTitle}
+        subtitle={p.programSubtitle}
+        startLabel={p.programStartLabel}
+        endLabel={p.programEndLabel}
+        weekNumber={p.currentWeekNumber}
+        totalWeeks={p.totalWeeks}
+      />
+
+      <div className="flex justify-end px-6 sm:px-10 pt-4">
+        <Link href="/roadmap" className="font-mono text-[11px] tracking-[0.1em]" style={{ color: "var(--muted-2)" }}>
+          BUILD YOUR OWN ROADMAP →
+        </Link>
+      </div>
+
+      {/* hero trail */}
+      <div className="px-6 sm:px-10 pt-4 pb-5">
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-1">
+          <div className="flex flex-col gap-1">
+            <div className="font-mono text-[11px] tracking-[0.18em]" style={{ color: "var(--muted-2)" }}>
+              THE TRAIL
+            </div>
+            <div className="font-serif text-[19px]" style={{ color: "var(--text-dim)" }}>
+              {paceHeadline}
+            </div>
+          </div>
+          <div className="flex items-center gap-3 sm:gap-5 font-mono text-[10px] tracking-[0.12em] flex-wrap" style={{ color: "var(--muted-2)" }}>
+            {p.paceDays < 0 && (
+              <div className="font-bold tracking-[0.14em] px-2.5 py-1" style={{ background: "var(--red)", color: "var(--panel)" }}>
+                {behindDays} DAYS BEHIND
+              </div>
+            )}
+            {p.paceDays > 0 && (
+              <div className="font-bold tracking-[0.14em] px-2.5 py-1" style={{ background: "var(--green)", color: "var(--panel)" }}>
+                {aheadDays} DAYS AHEAD
+              </div>
+            )}
+            <div className="flex items-center gap-1.5">
+              <span className="w-4 h-[3px] block" style={{ background: "var(--amber)" }} />
+              TRAVELED
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="w-4 h-[3px] block" style={{ background: "var(--red)" }} />
+              GAP
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="w-4 h-[3px] block" style={{ background: "#2C3245" }} />
+              AHEAD
+            </div>
+          </div>
+        </div>
+
+        <div className="hidden md:block pb-12">
+          <DesktopTrail checkpoints={p.checkpoints} progress={p.progressFraction} today={p.todayFraction} />
+        </div>
+        <div className="md:hidden flex justify-center py-4">
+          <MobileTrail checkpoints={p.checkpoints} progress={p.progressFraction} today={p.todayFraction} />
+        </div>
+
+        <StatsStrip
+          daysComplete={p.daysComplete}
+          totalDays={p.totalDays}
+          streak={p.streak}
+          paceDays={p.paceDays}
+          mocksDone={p.mocksDone}
+          mocksTotal={p.mocksTotal}
+          tasksDone={p.tasksDone}
+          tasksTotal={p.tasksTotal}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+      </div>
+
+      <DashboardWeekSection
+        days={p.currentWeekDays}
+        todayDateKey={p.today.dateKey}
+        weekNumber={p.currentWeekNumber}
+        weekFocus={p.weekFocus}
+        coverage={p.coverage}
+        recentLog={p.recentLog}
+        weekLoad={p.weekLoad}
+      />
     </div>
   );
 }

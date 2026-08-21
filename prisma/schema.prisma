@@ -1,0 +1,63 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum DayStatus {
+  PENDING // today or future, not yet confirmed
+  CONFIRMED // fully confirmed complete
+  MISSED // past, no tasks confirmed
+  RECOVERED // past, partially confirmed late
+}
+
+model Settings {
+  id                Int      @id @default(autoincrement())
+  programTitle      String   @default("The Ascent")
+  programSubtitle   String   @default("FAANG Prep · 12-Week Block")
+  programStartDate  DateTime
+  programWeeksCount Int      @default(12)
+}
+
+model Week {
+  id     Int    @id @default(autoincrement())
+  number Int    @unique
+  focus  String
+  days   Day[]
+}
+
+model Day {
+  id            Int       @id @default(autoincrement())
+  date          DateTime  @unique
+  weekNumber    Int
+  week          Week      @relation(fields: [weekNumber], references: [number])
+  dayOfWeek     Int // 1=Mon ... 7=Sun
+  status        DayStatus @default(PENDING)
+  reviewOnly    Boolean   @default(false)
+  estimateMin   Int       @default(0)
+  loggedMin     Int       @default(0)
+  confirmedAt   DateTime?
+  rescheduleNote String?
+  tasks         Task[]
+
+  @@index([weekNumber])
+}
+
+model Task {
+  id       Int      @id @default(autoincrement())
+  dayId    Int
+  day      Day      @relation(fields: [dayId], references: [id], onDelete: Cascade)
+  category String
+  name     String
+  meta     String?
+  minutes  Int?
+  link     String?
+  done     Boolean  @default(false)
+  order    Int      @default(0)
+}

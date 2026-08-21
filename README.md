@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# The Ascent — FAANG Prep Tracker
 
-## Getting Started
+A 12-week interview prep tracker: a "trail" visualization of progress
+against calendar pace, daily check-ins, and coverage across DSA, LLD,
+HLD, mock interviews and review.
 
-First, run the development server:
+Built with Next.js (App Router), TypeScript, Tailwind CSS, and Prisma
++ SQLite.
+
+## Getting started
 
 ```bash
+npm install
+npm run db:seed   # generates the 12-week program + demo history
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The seed script always positions "today" in week 7 of 12, with
+realistic (deterministic) history for every day before today —
+some confirmed, some missed, a few recovered late — so the trail,
+pace, streak, and coverage stats are meaningful from the first load.
+Today's day starts unconfirmed so you can use the check-in panel for
+real.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Re-run `npm run db:seed` any time to reset the program back to that
+initial demo state.
 
-## Learn More
+## How the data model works
 
-To learn more about Next.js, take a look at the following resources:
+- `Settings` — a single row holding the program's start date (always
+  computed relative to today so the "today" marker stays meaningful).
+- `Week` (1–12) — a theme/focus string per week.
+- `Day` — one per calendar day of the program, with a `status`
+  (`PENDING` / `CONFIRMED` / `MISSED` / `RECOVERED`) and its `Task[]`.
+- `Task` — a single study item (category `DSA` / `LLD` / `HLD` /
+  `MOCK` / `REVIEW`), toggled done/not-done from the check-in panel.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Closing a day (`confirmDay` in `src/app/actions.ts`) derives its
+status from how many tasks ended up done: all done → `CONFIRMED`,
+some done → `RECOVERED` (used for both same-day partial confirms and
+late check-ins — partial credit counts toward pace but does not
+restore the streak), none done → `MISSED`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Useful scripts
 
-## Deploy on Vercel
+- `npm run dev` — start the dev server
+- `npm run db:seed` — reset and reseed the database
+- `npm run db:studio` — open Prisma Studio to browse the data
+- `npm run build` / `npm run start` — production build
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Design reference
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The original visual design (a Claude Design canvas export) is kept
+in `design/` for reference.

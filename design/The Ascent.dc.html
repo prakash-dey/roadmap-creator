@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="_ds/industry-609a19f7-36cd-461f-a4e6-3befd95a4765/styles.css">
+<script src="_ds/industry-609a19f7-36cd-461f-a4e6-3befd95a4765/_ds_bundle.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0b0d12;color:#E8E6E1;font-family:Inter,system-ui,sans-serif}
+a{color:#F5A524;text-decoration:none}a:hover{color:#ffc25c}
+::selection{background:rgba(245,165,36,.3)}
+</style>
+</helmet>
+
+<div style="padding:48px 56px 80px;display:flex;flex-direction:column;gap:64px;background:#0b0d12;min-height:100vh">
+
+  <div style="display:flex;flex-direction:column;gap:6px">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.16em;color:#6E7484">THE ASCENT — MOCK 01 · DESKTOP DASHBOARD 1440</div>
+    <div style="font-family:Inter,sans-serif;font-size:12px;color:#4E5464">Mid-program state: week 7 of 12, 3 days behind pace</div>
+  </div>
+
+  <!-- ================= DESKTOP ================= -->
+  <div style="position:relative;width:1440px;max-width:100%;background:#12141C;border:1px solid #23283a">
+    <i style="position:absolute;top:-6px;left:-6px;color:#3a4256;font:400 12px/1 monospace">+</i>
+    <i style="position:absolute;top:-6px;right:-6px;color:#3a4256;font:400 12px/1 monospace">+</i>
+    <i style="position:absolute;bottom:-6px;left:-6px;color:#3a4256;font:400 12px/1 monospace">+</i>
+    <i style="position:absolute;bottom:-6px;right:-6px;color:#3a4256;font:400 12px/1 monospace">+</i>
+
+    <!-- top bar -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 40px;border-bottom:1px solid #1e2230">
+      <div style="display:flex;align-items:baseline;gap:14px">
+        <div style="font-family:Fraunces,serif;font-weight:600;font-size:26px;letter-spacing:-.01em">The Ascent</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:#6E7484">FAANG PREP · 12-WEEK BLOCK</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:28px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:#8A8F9E">JUN 09 → AUG 31</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;color:#F5A524;border:1px solid rgba(245,165,36,.4);padding:6px 12px">WEEK 07 / 12</div>
+      </div>
+    </div>
+
+    <!-- hero road -->
+    <div style="position:relative;padding:34px 40px 20px">
+      <sc-if value="{{ gridOverlay }}" hint-placeholder-val="{{ true }}">
+        <div style="position:absolute;inset:0;background-image:linear-gradient(to right,rgba(255,255,255,.028) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,.028) 1px,transparent 1px);background-size:60px 60px;pointer-events:none"></div>
+      </sc-if>
+
+      <div style="position:relative;display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;color:#6E7484">THE TRAIL</div>
+          <div style="font-family:Fraunces,serif;font-size:19px;color:#C9CBD4">{{ paceHeadline }}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:22px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;color:#6E7484">
+          <div style="background:#F0554E;color:#12141C;font-weight:700;letter-spacing:.14em;padding:5px 10px">{{ behindLabel }}</div>
+          <div style="display:flex;align-items:center;gap:7px"><span style="width:16px;height:3px;background:#F5A524;display:block"></span>TRAVELED</div>
+          <div style="display:flex;align-items:center;gap:7px"><span style="width:16px;height:3px;background:#F0554E;display:block"></span>GAP</div>
+          <div style="display:flex;align-items:center;gap:7px"><span style="width:16px;height:3px;background:#2C3245;display:block"></span>AHEAD</div>
+        </div>
+      </div>
+
+      <svg viewBox="0 0 1200 250" width="100%" style="display:block;overflow:visible">
+        <defs>
+          <pattern id="asc-hatch" width="7" height="7" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+            <line x1="0" y1="0" x2="0" y2="7" stroke="#12141C" stroke-width="3" opacity=".45"></line>
+          </pattern>
+        </defs>
+        <path id="asc-path" d="M60,170 Q109,170 158,138 T256,116 T354,124 T452,158 T550,188 T648,192 T746,166 T844,130 T942,108 T1040,116 T1138,148" fill="none" stroke="#2C3245" stroke-width="14" stroke-linecap="round"></path>
+        <path d="M60,170 Q109,170 158,138 T256,116 T354,124 T452,158 T550,188 T648,192 T746,166 T844,130 T942,108 T1040,116 T1138,148" fill="none" stroke="#171B26" stroke-width="6" stroke-linecap="round" stroke-dasharray="2 12"></path>
+        <path id="asc-gap" d="M60,170 Q109,170 158,138 T256,116 T354,124 T452,158 T550,188 T648,192 T746,166 T844,130 T942,108 T1040,116 T1138,148" fill="none" stroke="#F0554E" stroke-width="14" stroke-linecap="butt" opacity=".85"></path>
+        <path id="asc-gaphatch" d="M60,170 Q109,170 158,138 T256,116 T354,124 T452,158 T550,188 T648,192 T746,166 T844,130 T942,108 T1040,116 T1138,148" fill="none" stroke="url(#asc-hatch)" stroke-width="14" stroke-linecap="butt"></path>
+        <path id="asc-travel" d="M60,170 Q109,170 158,138 T256,116 T354,124 T452,158 T550,188 T648,192 T746,166 T844,130 T942,108 T1040,116 T1138,148" fill="none" stroke="#F5A524" stroke-width="14" stroke-linecap="round"></path>
+
+        <g stroke="#12141C" stroke-width="0">
+          <g><circle cx="60" cy="170" r="13" fill="#4ADE80"></circle><text x="60" y="205" text-anchor="middle" fill="#5C6274" style="font-family:'JetBrains Mono',monospace;font-size:11px">01</text></g>
+          <g><circle cx="158" cy="138" r="13" fill="#4ADE80"></circle><text x="158" y="173" text-anchor="middle" fill="#5C6274" style="font-family:'JetBrains Mono',monospace;font-size:11px">02</text></g>
+          <g><circle cx="256" cy="116" r="13" fill="#4ADE80"></circle><text x="256" y="151" text-anchor="middle" fill="#5C6274" style="font-family:'JetBrains Mono',monospace;font-size:11px">03</text></g>
+          <g><circle cx="354" cy="124" r="13" fill="#4ADE80"></circle><text x="354" y="159" text-anchor="middle" fill="#5C6274" style="font-family:'JetBrains Mono',monospace;font-size:11px">04</text></g>
+          <g><circle cx="452" cy="158" r="13" fill="#4ADE80"></circle><text x="452" y="193" text-anchor="middle" fill="#5C6274" style="font-family:'JetBrains Mono',monospace;font-size:11px">05</text></g>
+          <g><circle cx="550" cy="188" r="13" fill="#4ADE80"></circle><text x="550" y="223" text-anchor="middle" fill="#5C6274" style="font-family:'JetBrains Mono',monospace;font-size:11px">06</text></g>
+          <g>
+            <circle cx="648" cy="192" r="17" fill="#12141C" stroke="#F5A524" stroke-width="3"></circle>
+            <circle cx="648" cy="192" r="6" fill="#F5A524"></circle>
+            <text x="648" y="231" text-anchor="middle" fill="#F5A524" style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em">07</text>
+          </g>
+          <g><circle cx="746" cy="166" r="10" fill="#12141C" stroke="#39405480" stroke-width="3"></circle><text x="746" y="199" text-anchor="middle" fill="#454B5C" style="font-family:'JetBrains Mono',monospace;font-size:11px">08</text></g>
+          <g><circle cx="844" cy="130" r="10" fill="#12141C" stroke="#39405480" stroke-width="3"></circle><text x="844" y="163" text-anchor="middle" fill="#454B5C" style="font-family:'JetBrains Mono',monospace;font-size:11px">09</text></g>
+          <g><circle cx="942" cy="108" r="10" fill="#12141C" stroke="#39405480" stroke-width="3"></circle><text x="942" y="141" text-anchor="middle" fill="#454B5C" style="font-family:'JetBrains Mono',monospace;font-size:11px">10</text></g>
+          <g><circle cx="1040" cy="116" r="10" fill="#12141C" stroke="#39405480" stroke-width="3"></circle><text x="1040" y="149" text-anchor="middle" fill="#454B5C" style="font-family:'JetBrains Mono',monospace;font-size:11px">11</text></g>
+          <g>
+            <rect x="1128" y="138" width="20" height="20" fill="#12141C" stroke="#5B9DFF" stroke-width="3"></rect>
+            <text x="1138" y="182" text-anchor="middle" fill="#5B9DFF" style="font-family:'JetBrains Mono',monospace;font-size:11px">12</text>
+          </g>
+        </g>
+
+        <!-- you-are-here marker -->
+        <g id="asc-you">
+          <line x1="0" y1="0" x2="0" y2="-30" stroke="#F5A524" stroke-width="1.5"></line>
+          <circle cx="0" cy="0" r="8" fill="#12141C" stroke="#F5A524" stroke-width="3"></circle>
+          <text x="0" y="-38" text-anchor="middle" fill="#F5A524" font-family="'JetBrains Mono',monospace" font-size="10" letter-spacing="1.2">YOU</text>
+        </g>
+        <!-- today marker -->
+        <g id="asc-today">
+          <line x1="0" y1="0" x2="0" y2="66" stroke="#F0554E" stroke-width="1.5" stroke-dasharray="3 4"></line>
+          <path d="M-7,-11 L7,-11 L0,0 Z" fill="#F0554E"></path>
+          <rect x="-38" y="66" width="76" height="24" fill="none" stroke="#F0554E"></rect>
+          <text x="0" y="83" text-anchor="middle" fill="#F0554E" font-family="'JetBrains Mono',monospace" font-size="10" letter-spacing="1.2">TODAY</text>
+        </g>
+
+      </svg>
+
+      <!-- stats strip -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#1e2230;border:1px solid #1e2230;margin-top:26px">
+        <div style="background:#12141C;padding:16px 20px;display:flex;flex-direction:column;gap:6px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;color:#6E7484">DAYS COMPLETE</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:500;color:#E8E6E1">41<span style="color:#4E5464;font-size:16px">/84</span></div>
+        </div>
+        <div style="background:#12141C;padding:16px 20px;display:flex;flex-direction:column;gap:6px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;color:#6E7484">CURRENT STREAK</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:500;color:#E8E6E1">1<span style="color:#4E5464;font-size:16px"> d</span></div>
+        </div>
+        <div style="background:#12141C;padding:16px 20px;display:flex;flex-direction:column;gap:6px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;color:#6E7484">PACE</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:500;color:#F0554E">{{ paceNumber }}<span style="color:#7c3a37;font-size:16px"> d</span></div>
+        </div>
+        <div style="background:#12141C;padding:16px 20px;display:flex;flex-direction:column;gap:6px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;color:#6E7484">MOCKS LOGGED</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:500;color:#E8E6E1">6<span style="color:#4E5464;font-size:16px">/12</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- week view + check-in -->
+    <div style="display:grid;grid-template-columns:1fr 400px;gap:1px;background:#1e2230;border-top:1px solid #1e2230">
+      <div style="background:#12141C;padding:28px 40px 34px;display:flex;flex-direction:column;gap:18px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between">
+          <div style="display:flex;align-items:baseline;gap:12px">
+            <div style="font-family:Fraunces,serif;font-size:20px">Week 07</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;color:#6E7484">GRAPHS · CONCURRENCY · CACHING</div>
+          </div>
+          <div style="display:flex;gap:16px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;color:#6E7484">
+            <span style="display:flex;align-items:center;gap:6px"><i style="width:7px;height:7px;background:#3FC7B4;display:block"></i>DSA</span>
+            <span style="display:flex;align-items:center;gap:6px"><i style="width:7px;height:7px;background:#FF7A85;display:block"></i>LLD</span>
+            <span style="display:flex;align-items:center;gap:6px"><i style="width:7px;height:7px;background:#A78BFA;display:block"></i>HLD</span>
+            <span style="display:flex;align-items:center;gap:6px"><i style="width:7px;height:7px;background:#5B9DFF;display:block"></i>MOCK</span>
+            <span style="display:flex;align-items:center;gap:6px"><i style="width:7px;height:7px;background:#F5A524;display:block"></i>REVIEW</span>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:10px">
+          <div style="border:1px solid #23283a;background:#141822;padding:14px 12px 12px;display:flex;flex-direction:column;gap:14px;min-height:150px">
+            <div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;color:#6E7484">MON</span><span style="font-family:'JetBrains Mono',monospace;font-size:16px;color:#C9CBD4">17</span></div>
+            <div style="display:flex;gap:5px"><i style="width:8px;height:8px;background:#3FC7B4;display:block"></i><i style="width:8px;height:8px;background:#FF7A85;display:block"></i><i style="width:8px;height:8px;background:#A78BFA;display:block"></i></div>
+            <div style="margin-top:auto;display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;color:#4ADE80"><span style="font-size:12px">✓</span>DONE</div>
+          </div>
+          <div style="border:1px solid #3a2523;background:#171319;padding:14px 12px 12px;display:flex;flex-direction:column;gap:14px;min-height:150px">
+            <div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;color:#6E7484">TUE</span><span style="font-family:'JetBrains Mono',monospace;font-size:16px;color:#C9CBD4">18</span></div>
+            <div style="display:flex;gap:5px"><i style="width:8px;height:8px;background:#3FC7B4;opacity:.35;display:block"></i><i style="width:8px;height:8px;background:#FF7A85;opacity:.35;display:block"></i><i style="width:8px;height:8px;background:#5B9DFF;opacity:.35;display:block"></i></div>
+            <div style="margin-top:auto;display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;color:#F0554E"><span style="font-size:12px">×</span>MISSED</div>
+          </div>
+          <div style="border:1px solid #3a2523;background:#171319;padding:14px 12px 12px;display:flex;flex-direction:column;gap:14px;min-height:150px">
+            <div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;color:#6E7484">WED</span><span style="font-family:'JetBrains Mono',monospace;font-size:16px;color:#C9CBD4">19</span></div>
+            <div style="display:flex;gap:5px"><i style="width:8px;height:8px;background:#3FC7B4;opacity:.35;display:block"></i><i style="width:8px;height:8px;background:#A78BFA;opacity:.35;display:block"></i></div>
+            <div style="margin-top:auto;display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;color:#F0554E"><span style="font-size:12px">×</span>MISSED</div>
+          </div>
+          <div style="position:relative;border:1px solid #F5A524;background:#1b1a1a;padding:14px 12px 12px;display:flex;flex-direction:column;gap:14px;min-height:150px">
+            <i style="position:absolute;top:-5px;left:-5px;color:#F5A524;font:400 11px/1 monospace">+</i>
+            <i style="position:absolute;top:-5px;right:-5px;color:#F5A524;font:400 11px/1 monospace">+</i>
+            <i style="position:absolute;bottom:-5px;left:-5px;color:#F5A524;font:400 11px/1 monospace">+</i>
+            <i style="position:absolute;bottom:-5px;right:-5px;color:#F5A524;font:400 11px/1 monospace">+</i>
+            <div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;color:#F5A524">THU</span><span style="font-family:'JetBrains Mono',monospace;font-size:16px;color:#F5EEE1">20</span></div>
+            <div style="display:flex;gap:5px"><i style="width:8px;height:8px;background:#3FC7B4;display:block"></i><i style="width:8px;height:8px;background:#FF7A85;display:block"></i><i style="width:8px;height:8px;background:#A78BFA;display:block"></i><i style="width:8px;height:8px;background:#5B9DFF;display:block"></i></div>
+            <div style="margin-top:auto;display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;color:#F5A524;letter-spacing:.04em;white-space:nowrap">TODAY 2/5</div>
+          </div>
+          <div style="border:1px solid #1e2230;background:#12141C;padding:14px 12px 12px;display:flex;flex-direction:column;gap:14px;min-height:150px">
+            <div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;color:#5C6274">FRI</span><span style="font-family:'JetBrains Mono',monospace;font-size:16px;color:#6E7484">21</span></div>
+            <div style="display:flex;gap:5px"><i style="width:8px;height:8px;background:#3FC7B4;opacity:.5;display:block"></i><i style="width:8px;height:8px;background:#A78BFA;opacity:.5;display:block"></i><i style="width:8px;height:8px;background:#5B9DFF;opacity:.5;display:block"></i></div>
+            <div style="margin-top:auto;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;color:#454B5C">UPCOMING</div>
+          </div>
+          <div style="border:1px solid #1e2230;background:#12141C;padding:14px 12px 12px;display:flex;flex-direction:column;gap:14px;min-height:150px">
+            <div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;color:#5C6274">SAT</span><span style="font-family:'JetBrains Mono',monospace;font-size:16px;color:#6E7484">22</span></div>
+            <div style="display:flex;gap:5px"><i style="width:8px;height:8px;background:#3FC7B4;opacity:.5;display:block"></i><i style="width:8px;height:8px;background:#FF7A85;opacity:.5;display:block"></i></div>
+            <div style="margin-top:auto;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;color:#454B5C">UPCOMING</div>
+          </div>
+          <div style="border:1px solid #1e2230;background:#12141C;padding:14px 12px 12px;display:flex;flex-direction:column;gap:14px;min-height:150px">
+            <div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;color:#5C6274">SUN</span><span style="font-family:'JetBrains Mono',monospace;font-size:16px;color:#6E7484">23</span></div>
+            <div style="display:flex;gap:5px"><i style="width:8px;height:8px;background:#F5A524;opacity:.5;display:block"></i></div>
+            <div style="margin-top:auto;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;color:#454B5C">REVIEW ONLY</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:24px;padding-top:6px;border-top:1px solid #1a1e2a;font-family:'JetBrains Mono',monospace;font-size:11px;color:#6E7484">
+          <span>WEEK LOAD <span style="color:#C9CBD4">14 TASKS</span></span>
+          <span>CONFIRMED <span style="color:#4ADE80">6</span></span>
+          <span>OPEN <span style="color:#F5A524">3</span></span>
+          <span>LAPSED <span style="color:#F0554E">5</span></span>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:14px">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;color:#6E7484">COVERAGE · LAST 6 WEEKS</div>
+            <div style="display:flex;flex-direction:column;gap:9px">
+              <div style="display:flex;align-items:center;gap:12px"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;color:#8A8F9E;width:52px">DSA</span><span style="flex:1;height:6px;background:#1c202c;display:block"><span style="display:block;height:6px;width:82%;background:#3FC7B4"></span></span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#C9CBD4;width:46px;text-align:right">64/78</span></div>
+              <div style="display:flex;align-items:center;gap:12px"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;color:#8A8F9E;width:52px">LLD</span><span style="flex:1;height:6px;background:#1c202c;display:block"><span style="display:block;height:6px;width:58%;background:#FF7A85"></span></span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#C9CBD4;width:46px;text-align:right">11/19</span></div>
+              <div style="display:flex;align-items:center;gap:12px"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;color:#8A8F9E;width:52px">HLD</span><span style="flex:1;height:6px;background:#1c202c;display:block"><span style="display:block;height:6px;width:47%;background:#A78BFA"></span></span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#C9CBD4;width:46px;text-align:right">9/19</span></div>
+              <div style="display:flex;align-items:center;gap:12px"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;color:#8A8F9E;width:52px">MOCK</span><span style="flex:1;height:6px;background:#1c202c;display:block"><span style="display:block;height:6px;width:50%;background:#5B9DFF"></span></span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#C9CBD4;width:46px;text-align:right">6/12</span></div>
+              <div style="display:flex;align-items:center;gap:12px"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;color:#8A8F9E;width:52px">REVIEW</span><span style="flex:1;height:6px;background:#1c202c;display:block"><span style="display:block;height:6px;width:33%;background:#F5A524"></span></span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#C9CBD4;width:46px;text-align:right">2/6</span></div>
+            </div>
+            <div style="font-size:12px;line-height:1.5;color:#6E7484;margin-top:2px">HLD is the thinnest column of the block. Weeks 08–09 add two design reviews to close it.</div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;color:#6E7484">RECENT LOG</div>
+            <div style="display:flex;flex-direction:column;gap:1px;background:#1a1e2a">
+              <div style="display:flex;align-items:center;gap:12px;background:#12141C;padding:10px 2px"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#5C6274;width:56px">AUG 17</span><span style="font-size:12px;color:#C9CBD4;flex:1">3 tasks · 3h 10m logged</span><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;color:#4ADE80">CONFIRMED</span></div>
+              <div style="display:flex;align-items:center;gap:12px;background:#12141C;padding:10px 2px"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#5C6274;width:56px">AUG 16</span><span style="font-size:12px;color:#C9CBD4;flex:1">2 tasks · 1h 45m logged</span><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;color:#4ADE80">CONFIRMED</span></div>
+              <div style="display:flex;align-items:center;gap:12px;background:#12141C;padding:10px 2px"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#5C6274;width:56px">AUG 15</span><span style="font-size:12px;color:#8A8F9E;flex:1">Mock rescheduled to Aug 20</span><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;color:#F0554E">MISSED</span></div>
+              <div style="display:flex;align-items:center;gap:12px;background:#12141C;padding:10px 2px"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#5C6274;width:56px">AUG 14</span><span style="font-size:12px;color:#C9CBD4;flex:1">4 tasks · 3h 55m logged</span><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;color:#4ADE80">CONFIRMED</span></div>
+              <div style="display:flex;align-items:center;gap:12px;background:#12141C;padding:10px 2px"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#5C6274;width:56px">AUG 13</span><span style="font-size:12px;color:#8A8F9E;flex:1">2 of 4 tasks · closed late</span><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;color:#F5A524">RECOVERED</span></div>
+              <div style="display:flex;align-items:center;gap:12px;background:#12141C;padding:10px 2px"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#5C6274;width:56px">AUG 12</span><span style="font-size:12px;color:#C9CBD4;flex:1">3 tasks · 2h 30m logged</span><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;color:#4ADE80">CONFIRMED</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- check-in panel -->
+      <div style="position:relative;background:#141822;padding:26px 28px 28px;display:flex;flex-direction:column;gap:20px">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;color:#F5A524">DAY CHECK-IN</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;color:#12141C;background:#F5A524;padding:3px 8px">TODAY</div>
+          </div>
+          <div style="font-family:Fraunces,serif;font-size:22px;line-height:1.2">Thursday, Aug 20</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#6E7484">WEEK 07 · DAY 4 · EST 3h 20m</div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <sc-for list="{{ tasks }}" as="t" hint-placeholder-count="5">
+            <div onClick="{{ t.toggle }}" style="display:flex;gap:12px;padding:12px 12px;border:1px solid #23283a;background:#12141C;cursor:pointer;align-items:flex-start" style-hover="border-color:#39405480;background:#161a25">
+              <div style="width:16px;height:16px;border:1.5px solid {{ t.boxBorder }};background:{{ t.boxBg }};flex:none;margin-top:2px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;color:#12141C;font-weight:700">{{ t.mark }}</div>
+              <div style="display:flex;flex-direction:column;gap:5px;min-width:0">
+                <div style="display:flex;align-items:center;gap:8px">
+                  <i style="width:7px;height:7px;flex:none;display:block;background:{{ t.color }}"></i>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:{{ t.color }}">{{ t.cat }}</span>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:#4E5464">{{ t.meta }}</span>
+                </div>
+                <div style="font-size:13px;line-height:1.4;color:{{ t.nameColor }}">{{ t.name }}</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="margin-top:auto;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;color:#6E7484"><span>CONFIRMED</span><span style="color:#E8E6E1">{{ doneCount }} / 5</span></div>
+          <div style="height:3px;background:#23283a"><div style="height:3px;background:#F5A524;width:{{ donePct }}"></div></div>
+          <div style="position:relative;margin-top:6px">
+            <i style="position:absolute;top:-5px;left:-5px;color:#F5A524;font:400 11px/1 monospace">+</i>
+            <i style="position:absolute;top:-5px;right:-5px;color:#F5A524;font:400 11px/1 monospace">+</i>
+            <i style="position:absolute;bottom:-5px;left:-5px;color:#F5A524;font:400 11px/1 monospace">+</i>
+            <i style="position:absolute;bottom:-5px;right:-5px;color:#F5A524;font:400 11px/1 monospace">+</i>
+            <button style="width:100%;border:none;background:#F5A524;color:#12141C;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.14em;padding:14px 0;cursor:pointer" style-hover="background:#ffb63f">CONFIRM DAY COMPLETE</button>
+          </div>
+          <button style="width:100%;border:1px solid #23283a;background:transparent;color:#8A8F9E;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;padding:11px 0;cursor:pointer" style-hover="border-color:#F0554E;color:#F0554E">MARK DAY AS MISSED</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= SECONDARY: LATE CONFIRM + MOBILE ================= -->
+  <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.16em;color:#6E7484">MOCK 02 — DAY DETAIL STATES &amp; MOBILE 390</div>
+    <div style="font-family:Inter,sans-serif;font-size:12px;color:#4E5464">Late confirmation of a missed day, and the mobile trail + check-in</div>
+  </div>
+
+  <div style="display:flex;gap:40px;flex-wrap:wrap;align-items:flex-start">
+
+    <!-- late confirm panel -->
+    <div style="position:relative;width:400px;background:#141822;border:1px solid #3a2523;padding:26px 28px 28px;display:flex;flex-direction:column;gap:20px">
+      <i style="position:absolute;top:-6px;left:-6px;color:#F0554E;font:400 12px/1 monospace">+</i>
+      <i style="position:absolute;top:-6px;right:-6px;color:#F0554E;font:400 12px/1 monospace">+</i>
+      <i style="position:absolute;bottom:-6px;left:-6px;color:#F0554E;font:400 12px/1 monospace">+</i>
+      <i style="position:absolute;bottom:-6px;right:-6px;color:#F0554E;font:400 12px/1 monospace">+</i>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;color:#F0554E">LATE CHECK-IN</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;color:#F0554E;border:1px solid #F0554E;padding:3px 8px">MISSED · 2D AGO</div>
+        </div>
+        <div style="font-family:Fraunces,serif;font-size:22px;line-height:1.2">Tuesday, Aug 18</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#6E7484">WEEK 07 · DAY 2 · LOGGED 1h 05m OF 3h</div>
+      </div>
+
+      <div style="border-left:2px solid #F0554E;padding:10px 12px;background:#1a1417;font-size:12px;line-height:1.5;color:#B9927F">Confirming late keeps the day on the trail but does not restore the streak. Partial credit counts toward pace.</div>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;gap:12px;padding:12px;border:1px solid #23283a;background:#12141C;align-items:flex-start">
+          <div style="width:16px;height:16px;border:1.5px solid #4ADE80;background:#4ADE80;flex:none;margin-top:2px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;color:#12141C;font-weight:700">✓</div>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <div style="display:flex;align-items:center;gap:8px"><i style="width:7px;height:7px;background:#3FC7B4;display:block"></i><span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:#3FC7B4">DSA</span><span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#4E5464">2 PROBLEMS</span></div>
+            <div style="font-size:13px;line-height:1.4;color:#8A8F9E">LC 207 · Course Schedule — cycle detection, iterative</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;padding:12px;border:1px solid #23283a;background:#12141C;align-items:flex-start">
+          <div style="width:16px;height:16px;border:1.5px solid #4ADE80;background:#4ADE80;flex:none;margin-top:2px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;color:#12141C;font-weight:700">✓</div>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <div style="display:flex;align-items:center;gap:8px"><i style="width:7px;height:7px;background:#3FC7B4;display:block"></i><span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:#3FC7B4">DSA</span><span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#4E5464">30 MIN</span></div>
+            <div style="font-size:13px;line-height:1.4;color:#8A8F9E">LC 743 · Network Delay Time — Dijkstra with heap</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;padding:12px;border:1px solid #3a2523;background:#12141C;align-items:flex-start">
+          <div style="width:16px;height:16px;border:1.5px solid #F0554E;flex:none;margin-top:2px"></div>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <div style="display:flex;align-items:center;gap:8px"><i style="width:7px;height:7px;background:#FF7A85;display:block"></i><span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:#FF7A85">LLD</span><span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#4E5464">NOT STARTED</span></div>
+            <div style="font-size:13px;line-height:1.4;color:#C9CBD4">Design an elevator system — state machine + scheduling policy</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;padding:12px;border:1px solid #3a2523;background:#12141C;align-items:flex-start">
+          <div style="width:16px;height:16px;border:1.5px solid #F0554E;flex:none;margin-top:2px"></div>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <div style="display:flex;align-items:center;gap:8px"><i style="width:7px;height:7px;background:#5B9DFF;display:block"></i><span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:#5B9DFF">MOCK</span><span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#4E5464">45 MIN · RESCHEDULE</span></div>
+            <div style="font-size:13px;line-height:1.4;color:#C9CBD4">Peer mock — "Design a URL shortener"</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button style="width:100%;border:1px solid #F0554E;background:rgba(240,85,78,.12);color:#FF8B84;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.14em;padding:14px 0;cursor:pointer" style-hover="background:rgba(240,85,78,.22)">CONFIRM 2 OF 4 · CLOSE DAY</button>
+        <button style="width:100%;border:1px solid #23283a;background:transparent;color:#8A8F9E;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;padding:11px 0;cursor:pointer" style-hover="border-color:#5B9DFF;color:#5B9DFF">PUSH 2 TASKS TO SUNDAY</button>
+      </div>
+    </div>
+
+    <!-- mobile dashboard -->
+    <div style="width:390px;background:#12141C;border:1px solid #23283a;border-radius:26px;overflow:hidden;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;padding:12px 22px 4px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#6E7484"><span>9:41</span><span>WEEK 07/12</span></div>
+      <div style="padding:14px 22px 18px;display:flex;flex-direction:column;gap:16px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between">
+          <div style="font-family:Fraunces,serif;font-size:24px">The Ascent</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;color:#F0554E;border:1px solid #F0554E;padding:3px 7px">−3 D</div>
+        </div>
+
+        <div style="display:flex;gap:14px">
+          <svg viewBox="0 0 120 540" width="104" height="470" style="display:block;flex:none;overflow:visible">
+            <path id="asc-mpath" d="M58,24 Q58,46 71,68 T76,112 T70,156 T57,200 T44,244 T40,288 T47,332 T60,376 T72,420 T76,464 T69,508" fill="none" stroke="#2C3245" stroke-width="11" stroke-linecap="round"></path>
+            <path id="asc-mgap" d="M58,24 Q58,46 71,68 T76,112 T70,156 T57,200 T44,244 T40,288 T47,332 T60,376 T72,420 T76,464 T69,508" fill="none" stroke="#F0554E" stroke-width="11" opacity=".85"></path>
+            <path id="asc-mtravel" d="M58,24 Q58,46 71,68 T76,112 T70,156 T57,200 T44,244 T40,288 T47,332 T60,376 T72,420 T76,464 T69,508" fill="none" stroke="#F5A524" stroke-width="11" stroke-linecap="round"></path>
+            <circle cx="58" cy="24" r="10" fill="#4ADE80"></circle>
+            <circle cx="71" cy="68" r="10" fill="#4ADE80"></circle>
+            <circle cx="76" cy="112" r="10" fill="#4ADE80"></circle>
+            <circle cx="70" cy="156" r="10" fill="#4ADE80"></circle>
+            <circle cx="57" cy="200" r="10" fill="#4ADE80"></circle>
+            <circle cx="44" cy="244" r="10" fill="#4ADE80"></circle>
+            <circle cx="40" cy="288" r="14" fill="#12141C" stroke="#F5A524" stroke-width="3"></circle>
+            <circle cx="40" cy="288" r="5" fill="#F5A524"></circle>
+            <circle cx="47" cy="332" r="8" fill="#12141C" stroke="#394054" stroke-width="3"></circle>
+            <circle cx="60" cy="376" r="8" fill="#12141C" stroke="#394054" stroke-width="3"></circle>
+            <circle cx="72" cy="420" r="8" fill="#12141C" stroke="#394054" stroke-width="3"></circle>
+            <circle cx="76" cy="464" r="8" fill="#12141C" stroke="#394054" stroke-width="3"></circle>
+            <rect x="60" y="498" width="18" height="18" fill="#12141C" stroke="#5B9DFF" stroke-width="3"></rect>
+            <g id="asc-myou"><line x1="0" y1="0" x2="46" y2="0" stroke="#F5A524" stroke-width="1"></line><text x="52" y="4" fill="#F5A524" style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em">HERE</text></g>
+            <g id="asc-mtoday"><line x1="0" y1="0" x2="46" y2="0" stroke="#F0554E" stroke-width="1" stroke-dasharray="3 3"></line><text x="52" y="4" fill="#F0554E" style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em">TODAY</text></g>
+          </svg>
+          <div style="display:flex;flex-direction:column;gap:14px;flex:1;min-width:0">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#1e2230;border:1px solid #1e2230">
+              <div style="background:#12141C;padding:11px 12px"><div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:#6E7484">DONE</div><div style="font-family:'JetBrains Mono',monospace;font-size:19px;color:#E8E6E1">41<span style="color:#4E5464;font-size:12px">/84</span></div></div>
+              <div style="background:#12141C;padding:11px 12px"><div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:#6E7484">STREAK</div><div style="font-family:'JetBrains Mono',monospace;font-size:19px;color:#E8E6E1">1<span style="color:#4E5464;font-size:12px">d</span></div></div>
+              <div style="background:#12141C;padding:11px 12px"><div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:#6E7484">PACE</div><div style="font-family:'JetBrains Mono',monospace;font-size:19px;color:#F0554E">−3<span style="color:#7c3a37;font-size:12px">d</span></div></div>
+              <div style="background:#12141C;padding:11px 12px"><div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:#6E7484">MOCKS</div><div style="font-family:'JetBrains Mono',monospace;font-size:19px;color:#E8E6E1">6<span style="color:#4E5464;font-size:12px">/12</span></div></div>
+            </div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:#6E7484">WEEK 07</div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;align-items:center;gap:10px;border:1px solid #23283a;background:#141822;padding:9px 10px"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#6E7484;width:52px">MON 17</span><span style="display:flex;gap:4px"><i style="width:6px;height:6px;background:#3FC7B4;display:block"></i><i style="width:6px;height:6px;background:#FF7A85;display:block"></i><i style="width:6px;height:6px;background:#A78BFA;display:block"></i></span><span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;color:#4ADE80">✓</span></div>
+              <div style="display:flex;align-items:center;gap:10px;border:1px solid #3a2523;background:#171319;padding:9px 10px"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#6E7484;width:52px">TUE 18</span><span style="display:flex;gap:4px"><i style="width:6px;height:6px;background:#3FC7B4;opacity:.35;display:block"></i><i style="width:6px;height:6px;background:#FF7A85;opacity:.35;display:block"></i><i style="width:6px;height:6px;background:#5B9DFF;opacity:.35;display:block"></i></span><span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;color:#F0554E">×</span></div>
+              <div style="display:flex;align-items:center;gap:10px;border:1px solid #3a2523;background:#171319;padding:9px 10px"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#6E7484;width:52px">WED 19</span><span style="display:flex;gap:4px"><i style="width:6px;height:6px;background:#3FC7B4;opacity:.35;display:block"></i><i style="width:6px;height:6px;background:#A78BFA;opacity:.35;display:block"></i></span><span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;color:#F0554E">×</span></div>
+              <div style="display:flex;align-items:center;gap:10px;border:1px solid #F5A524;background:#1b1a1a;padding:9px 10px"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#F5A524;width:52px">THU 20</span><span style="display:flex;gap:4px"><i style="width:6px;height:6px;background:#3FC7B4;display:block"></i><i style="width:6px;height:6px;background:#FF7A85;display:block"></i><i style="width:6px;height:6px;background:#A78BFA;display:block"></i><i style="width:6px;height:6px;background:#5B9DFF;display:block"></i></span><span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;color:#F5A524">2/5</span></div>
+              <div style="display:flex;align-items:center;gap:10px;border:1px solid #1e2230;padding:9px 10px"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5C6274;width:52px">FRI 21</span><span style="display:flex;gap:4px"><i style="width:6px;height:6px;background:#3FC7B4;opacity:.5;display:block"></i><i style="width:6px;height:6px;background:#A78BFA;opacity:.5;display:block"></i><i style="width:6px;height:6px;background:#5B9DFF;opacity:.5;display:block"></i></span></div>
+              <div style="display:flex;align-items:center;gap:10px;border:1px solid #1e2230;padding:9px 10px"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5C6274;width:52px">SAT 22</span><span style="display:flex;gap:4px"><i style="width:6px;height:6px;background:#3FC7B4;opacity:.5;display:block"></i><i style="width:6px;height:6px;background:#FF7A85;opacity:.5;display:block"></i></span></div>
+              <div style="display:flex;align-items:center;gap:10px;border:1px solid #1e2230;padding:9px 10px"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#5C6274;width:52px">SUN 23</span><span style="display:flex;gap:4px"><i style="width:6px;height:6px;background:#F5A524;opacity:.5;display:block"></i></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:auto;padding:14px 22px 20px;border-top:1px solid #1e2230">
+        <button style="width:100%;border:none;background:#F5A524;color:#12141C;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.14em;padding:15px 0;cursor:pointer" style-hover="background:#ffb63f">CHECK IN · THU 20</button>
+      </div>
+    </div>
+
+    <!-- mobile check-in -->
+    <div style="width:390px;background:#12141C;border:1px solid #23283a;border-radius:26px;overflow:hidden;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;padding:12px 22px 4px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#6E7484"><span>9:41</span><span>DAY 4 / 7</span></div>
+      <div style="padding:14px 22px 18px;display:flex;flex-direction:column;gap:18px">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#6E7484">←</span>
+          <div style="display:flex;flex-direction:column">
+            <div style="font-family:Fraunces,serif;font-size:21px">Thursday, Aug 20</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#6E7484">WEEK 07 · EST 3h 20m</div>
+          </div>
+          <span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;color:#12141C;background:#F5A524;padding:3px 8px">TODAY</span>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;gap:12px;padding:13px 12px;border:1px solid #23283a;background:#141822;align-items:flex-start">
+            <div style="width:18px;height:18px;border:1.5px solid #4ADE80;background:#4ADE80;flex:none;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:12px;color:#12141C;font-weight:700">✓</div>
+            <div style="display:flex;flex-direction:column;gap:5px"><div style="display:flex;align-items:center;gap:8px"><i style="width:7px;height:7px;background:#3FC7B4;display:block"></i><span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:#3FC7B4">DSA</span></div><div style="font-size:13px;line-height:1.4;color:#8A8F9E">LC 236 · Lowest Common Ancestor of a Binary Tree</div></div>
+          </div>
+          <div style="display:flex;gap:12px;padding:13px 12px;border:1px solid #23283a;background:#141822;align-items:flex-start">
+            <div style="width:18px;height:18px;border:1.5px solid #4ADE80;background:#4ADE80;flex:none;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:12px;color:#12141C;font-weight:700">✓</div>
+            <div style="display:flex;flex-direction:column;gap:5px"><div style="display:flex;align-items:center;gap:8px"><i style="width:7px;height:7px;background:#3FC7B4;display:block"></i><span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:#3FC7B4">DSA</span></div><div style="font-size:13px;line-height:1.4;color:#8A8F9E">LC 1091 · Shortest Path in Binary Matrix</div></div>
+          </div>
+          <div style="display:flex;gap:12px;padding:13px 12px;border:1px solid #23283a;background:#12141C;align-items:flex-start">
+            <div style="width:18px;height:18px;border:1.5px solid #394054;flex:none"></div>
+            <div style="display:flex;flex-direction:column;gap:5px"><div style="display:flex;align-items:center;gap:8px"><i style="width:7px;height:7px;background:#FF7A85;display:block"></i><span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:#FF7A85">LLD</span><span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#4E5464">50 MIN</span></div><div style="font-size:13px;line-height:1.4;color:#C9CBD4">Design a parking lot — class diagram + concurrency notes</div></div>
+          </div>
+          <div style="display:flex;gap:12px;padding:13px 12px;border:1px solid #23283a;background:#12141C;align-items:flex-start">
+            <div style="width:18px;height:18px;border:1.5px solid #394054;flex:none"></div>
+            <div style="display:flex;flex-direction:column;gap:5px"><div style="display:flex;align-items:center;gap:8px"><i style="width:7px;height:7px;background:#A78BFA;display:block"></i><span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:#A78BFA">HLD</span><span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#4E5464">40 MIN</span></div><div style="font-size:13px;line-height:1.4;color:#C9CBD4">Spanner paper, §4 — notes on TrueTime and commit wait</div></div>
+          </div>
+          <div style="display:flex;gap:12px;padding:13px 12px;border:1px solid #23283a;background:#12141C;align-items:flex-start">
+            <div style="width:18px;height:18px;border:1.5px solid #394054;flex:none"></div>
+            <div style="display:flex;flex-direction:column;gap:5px"><div style="display:flex;align-items:center;gap:8px"><i style="width:7px;height:7px;background:#5B9DFF;display:block"></i><span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:#5B9DFF">MOCK</span><span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#4E5464">45 MIN · 19:00</span></div><div style="font-size:13px;line-height:1.4;color:#C9CBD4">Peer mock — "Design a rate limiter"</div></div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:auto;padding:14px 22px 20px;border-top:1px solid #1e2230;display:flex;flex-direction:column;gap:9px">
+        <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;color:#6E7484"><span>CONFIRMED</span><span style="color:#E8E6E1">2 / 5</span></div>
+        <div style="height:3px;background:#23283a"><div style="height:3px;background:#F5A524;width:40%"></div></div>
+        <button style="width:100%;border:none;background:#F5A524;color:#12141C;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.14em;padding:15px 0;cursor:pointer;margin-top:4px" style-hover="background:#ffb63f">CONFIRM DAY COMPLETE</button>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;behindDays&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:0,&quot;max&quot;:10,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Pace&quot;},&quot;gridOverlay&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Style&quot;}}">
+const CATS = {
+  DSA: '#3FC7B4', LLD: '#FF7A85', HLD: '#A78BFA', MOCK: '#5B9DFF', REVIEW: '#F5A524'
+};
+class Component extends DCLogic {
+  state = {
+    done: [true, true, false, false, false],
+    items: [
+      { cat: 'DSA', meta: '35 MIN', name: 'LC 236 · Lowest Common Ancestor of a Binary Tree' },
+      { cat: 'DSA', meta: '35 MIN', name: 'LC 1091 · Shortest Path in Binary Matrix' },
+      { cat: 'LLD', meta: '50 MIN', name: 'Design a parking lot — class diagram + concurrency notes' },
+      { cat: 'HLD', meta: '40 MIN', name: 'Spanner paper, §4 — notes on TrueTime and commit wait' },
+      { cat: 'MOCK', meta: '45 MIN · 19:00', name: 'Peer mock — "Design a rate limiter"' }
+    ]
+  };
+
+  componentDidMount() { requestAnimationFrame(() => this.place()); }
+  componentDidUpdate() { this.place(); }
+
+  place() {
+    const behind = this.props.behindDays ?? 3;
+    const prog = (5 + 4 / 7) / 11;
+    // pace is exaggerated on the trail so a few days off is readable at a glance
+    const today = Math.min(1, prog + behind * 0.03);
+    const set = (id, fn) => { const el = document.getElementById(id); if (el) fn(el); };
+    const run = (pathId, travelId, gapIds, youId, todayId, vertical) => {
+      const p = document.getElementById(pathId); if (!p || !p.getTotalLength) return;
+      const L = p.getTotalLength();
+      set(travelId, e => { e.setAttribute('stroke-dasharray', (L * prog) + ' ' + L); });
+      gapIds.forEach(id => set(id, e => {
+        e.setAttribute('stroke-dasharray', (L * (today - prog)) + ' ' + L);
+        e.setAttribute('stroke-dashoffset', String(-L * prog));
+      }));
+      const a = p.getPointAtLength(L * prog), b = p.getPointAtLength(L * today);
+      set(youId, e => e.setAttribute('transform', 'translate(' + a.x + ',' + a.y + ')'));
+      set(todayId, e => e.setAttribute('transform', 'translate(' + b.x + ',' + b.y + ')'));
+
+    };
+    run('asc-path', 'asc-travel', ['asc-gap', 'asc-gaphatch'], 'asc-you', 'asc-today', false);
+    run('asc-mpath', 'asc-mtravel', ['asc-mgap'], 'asc-myou', 'asc-mtoday', true);
+  }
+
+  renderVals() {
+    const behind = this.props.behindDays ?? 3;
+    const done = this.state.done;
+    const n = done.filter(Boolean).length;
+    return {
+      gridOverlay: this.props.gridOverlay ?? true,
+      behindLabel: behind + ' DAYS BEHIND',
+      paceNumber: '−' + behind,
+      paceHeadline: 'You are ' + behind + ' days short of where the calendar puts you.',
+      doneCount: n,
+      donePct: (n / 5 * 100) + '%',
+      tasks: this.state.items.map((t, i) => ({
+        cat: t.cat, meta: t.meta, name: t.name, color: CATS[t.cat],
+        mark: done[i] ? '✓' : '',
+        boxBg: done[i] ? '#4ADE80' : 'transparent',
+        boxBorder: done[i] ? '#4ADE80' : '#394054',
+        nameColor: done[i] ? '#8A8F9E' : '#C9CBD4',
+        toggle: () => this.setState(s => {
+          const d = s.done.slice(); d[i] = !d[i]; return { done: d };
+        })
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

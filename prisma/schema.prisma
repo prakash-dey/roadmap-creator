@@ -7,7 +7,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 enum DayStatus {
@@ -33,31 +33,31 @@ model Week {
 }
 
 model Day {
-  id            Int       @id @default(autoincrement())
-  date          DateTime  @unique
-  weekNumber    Int
-  week          Week      @relation(fields: [weekNumber], references: [number])
-  dayOfWeek     Int // 1=Mon ... 7=Sun
-  status        DayStatus @default(PENDING)
-  reviewOnly    Boolean   @default(false)
-  estimateMin   Int       @default(0)
-  loggedMin     Int       @default(0)
-  confirmedAt   DateTime?
+  id             Int       @id @default(autoincrement())
+  date           DateTime  @unique
+  weekNumber     Int
+  week           Week      @relation(fields: [weekNumber], references: [number])
+  dayOfWeek      Int // 1=Mon ... 7=Sun
+  status         DayStatus @default(PENDING)
+  reviewOnly     Boolean   @default(false)
+  estimateMin    Int       @default(0)
+  loggedMin      Int       @default(0)
+  confirmedAt    DateTime?
   rescheduleNote String?
-  tasks         Task[]
+  tasks          Task[]
 
   @@index([weekNumber])
 }
 
 model Task {
-  id       Int      @id @default(autoincrement())
+  id       Int     @id @default(autoincrement())
   dayId    Int
-  day      Day      @relation(fields: [dayId], references: [id], onDelete: Cascade)
+  day      Day     @relation(fields: [dayId], references: [id], onDelete: Cascade)
   category String
   name     String
   meta     String?
   minutes  Int?
   link     String?
-  done     Boolean  @default(false)
-  order    Int      @default(0)
+  done     Boolean @default(false)
+  order    Int     @default(0)
 }

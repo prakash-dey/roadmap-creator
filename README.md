@@ -12,7 +12,6 @@ Neon Postgres, and Neon Auth.
 ```bash
 npm install
 npx neon env pull
-npm run db:seed   # generates the 12-week program + demo history
 npm run dev
 ```
 
@@ -25,21 +24,13 @@ private `NEON_AUTH_COOKIE_SECRET` of at least 32 characters.
 
 Open http://localhost:3000.
 
-The seed script always positions "today" in week 7 of 12, with
-realistic (deterministic) history for every day before today —
-some confirmed, some missed, a few recovered late — so the trail,
-pace, streak, and coverage stats are meaningful from the first load.
-Today's day starts unconfirmed so you can use the check-in panel for
-real.
-
-Re-run `npm run db:seed` any time to reset the program back to that
-initial demo state.
+Create an account, then import one or more roadmap files from the
+roadmap management screen. Every roadmap is isolated to its owner.
 
 ## How the data model works
 
-- `Settings` — a single row holding the program's start date (always
-  computed relative to today so the "today" marker stays meaningful).
-- `Week` (1–12) — a theme/focus string per week.
+- `Roadmap` — an owner-scoped program with its title and date range.
+- `Week` — a theme/focus string scoped to one roadmap.
 - `Day` — one per calendar day of the program, with a `status`
   (`PENDING` / `CONFIRMED` / `MISSED` / `RECOVERED`) and its `Task[]`.
 - `Task` — a single study item (category `DSA` / `LLD` / `HLD` /
@@ -54,7 +45,6 @@ restore the streak), none done → `MISSED`.
 ## Useful scripts
 
 - `npm run dev` — start the dev server
-- `npm run db:seed` — reset and reseed the database
 - `npm run db:studio` — open Prisma Studio to browse the data
 - `npm run build` / `npm run start` — production build
 

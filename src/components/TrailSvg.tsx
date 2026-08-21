@@ -204,7 +204,13 @@ export function MobileTrail({
   });
 
   return (
-    <svg viewBox="0 0 120 540" width={104} height={470} style={{ display: "block", flex: "none", overflow: "visible" }}>
+    <svg
+      viewBox="0 0 160 540"
+      role="img"
+      aria-label="Roadmap progress trail showing current progress and today's expected position"
+      className="h-auto w-full max-w-[160px]"
+      style={{ display: "block", flex: "none", overflow: "visible" }}
+    >
       <path id="asc-mpath" d={MOBILE_PATH} fill="none" stroke="#2C3245" strokeWidth={11} strokeLinecap="round" />
       <path id="asc-mgap" d={MOBILE_PATH} fill="none" stroke="#F0554E" strokeWidth={11} opacity={0.85} />
       <path id="asc-mtravel" d={MOBILE_PATH} fill="none" stroke="#F5A524" strokeWidth={11} strokeLinecap="round" />

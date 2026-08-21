@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { getProgramView } from "@/lib/data";
+import { requireUser } from "@/lib/auth/session";
 import { TopBar } from "@/components/TopBar";
 import { DesktopTrail, MobileTrail } from "@/components/TrailSvg";
 import { StatsStrip } from "@/components/StatsStrip";
@@ -7,8 +9,12 @@ import { DashboardWeekSection } from "@/components/DashboardWeekSection";
 
 export const dynamic = "force-dynamic";
 
-export default async function Home() {
-  const p = await getProgramView();
+export default async function Home({ searchParams }: { searchParams: Promise<{ roadmap?: string }> }) {
+  const user = await requireUser();
+  const { roadmap } = await searchParams;
+  const requestedId = roadmap && /^\d+$/.test(roadmap) ? Number(roadmap) : undefined;
+  const p = await getProgramView(user.id, requestedId);
+  if (!p) redirect("/roadmap");
 
   const behindDays = p.paceDays < 0 ? -p.paceDays : 0;
   const aheadDays = p.paceDays > 0 ? p.paceDays : 0;
@@ -32,7 +38,7 @@ export default async function Home() {
 
       <div className="flex justify-end px-6 sm:px-10 pt-4">
         <Link href="/roadmap" className="font-mono text-[11px] tracking-[0.1em]" style={{ color: "var(--muted-2)" }}>
-          BUILD YOUR OWN ROADMAP →
+          MANAGE ROADMAPS →
         </Link>
       </div>
 

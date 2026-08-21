@@ -50,6 +50,7 @@ export type RecentLogEntryVM = {
 };
 
 export type ProgramView = {
+  roadmapId: number;
   programTitle: string;
   programSubtitle: string;
   programStartLabel: string;
@@ -78,19 +79,34 @@ export type ProgramView = {
 
 const KNOWN_CATEGORY_ORDER = ["DSA", "LLD", "HLD", "MOCK", "REVIEW"];
 
-async function getSettings() {
-  const settings = await prisma.settings.findFirst();
-  if (!settings) {
-    throw new Error("Program is not seeded yet. Run `npm run db:seed`.");
-  }
-  return settings;
+export type RoadmapSummary = {
+  id: number;
+  title: string;
+  subtitle: string;
+  totalWeeks: number;
+  updatedAt: Date;
+};
+
+export async function listRoadmaps(ownerId: string): Promise<RoadmapSummary[]> {
+  const roadmaps = await prisma.roadmap.findMany({
+    where: { ownerId },
+    orderBy: { updatedAt: "desc" },
+    select: { id: true, programTitle: true, programSubtitle: true, programWeeksCount: true, updatedAt: true },
+  });
+  return roadmaps.map((roadmap) => ({
+    id: roadmap.id,
+    title: roadmap.programTitle,
+    subtitle: roadmap.programSubtitle,
+    totalWeeks: roadmap.programWeeksCount,
+    updatedAt: roadmap.updatedAt,
+  }));
 }
 
 function toDayVM(
   day: {
     id: number;
     date: Date;
-    weekNumber: number;
+    week: { number: number };
     dayOfWeek: number;
     status: DayStatus;
     reviewOnly: boolean;
@@ -118,7 +134,7 @@ function toDayVM(
     longDateLabel: formatLongDate(day.date),
     weekdayShort: weekdayShort(day.date),
     dayNumber: day.date.getDate(),
-    weekNumber: day.weekNumber,
+    weekNumber: day.week.number,
     dayOfWeek: day.dayOfWeek,
     status: day.status,
     reviewOnly: day.reviewOnly,
@@ -149,23 +165,27 @@ function computeTodayDayIndex(programStart: Date): number {
   return Math.round((today.getTime() - dateOnly(programStart).getTime()) / 86400000) + 1;
 }
 
-export async function getProgramView(): Promise<ProgramView> {
-  const settings = await getSettings();
-  const totalWeeks = settings.programWeeksCount;
+export async function getProgramView(ownerId: string, roadmapId?: number): Promise<ProgramView | null> {
+  const roadmap = await prisma.roadmap.findFirst({
+    where: { ownerId, ...(roadmapId ? { id: roadmapId } : {}) },
+    orderBy: { updatedAt: "desc" },
+    include: {
+      weeks: { orderBy: { number: "asc" } },
+      days: { orderBy: { date: "asc" }, include: { week: { select: { number: true } }, tasks: { orderBy: { order: "asc" } } } },
+    },
+  });
+  if (!roadmap) return null;
+
+  const totalWeeks = roadmap.programWeeksCount;
   const totalDays = totalWeeks * 7;
-  const programStart = dateOnly(settings.programStartDate);
+  const programStart = dateOnly(roadmap.programStartDate);
   const todayDayIndex = computeTodayDayIndex(programStart);
   const currentWeekNumber = Math.min(totalWeeks, Math.max(1, Math.ceil(todayDayIndex / 7)));
 
-  const days = await prisma.day.findMany({
-    orderBy: { date: "asc" },
-    include: { tasks: true },
-  });
-
-  const dayVMs = days.map((d, i) => toDayVM(d, todayDayIndex, i + 1));
+  const dayVMs = roadmap.days.map((day, index) => toDayVM(day, todayDayIndex, index + 1));
   const todayVM = dayVMs.find((d) => d.isToday) ?? dayVMs[dayVMs.length - 1];
 
-  const week = await prisma.week.findUnique({ where: { number: currentWeekNumber } });
+  const week = roadmap.weeks.find((item) => item.number === currentWeekNumber);
 
   const currentWeekDays = dayVMs.filter((d) => d.weekNumber === currentWeekNumber);
 
@@ -242,8 +262,9 @@ export async function getProgramView(): Promise<ProgramView> {
   };
 
   return {
-    programTitle: settings.programTitle,
-    programSubtitle: settings.programSubtitle,
+    roadmapId: roadmap.id,
+    programTitle: roadmap.programTitle,
+    programSubtitle: roadmap.programSubtitle,
     programStartLabel: formatMonthDay(programStart),
     programEndLabel: formatMonthDay(addDays(programStart, totalDays - 1)),
     totalWeeks,

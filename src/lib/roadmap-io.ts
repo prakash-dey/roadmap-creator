@@ -105,7 +105,7 @@ export function buildTemplateWorkbook(): XLSX.WorkBook {
     ["   - Duration Label: free text shown next to the task, e.g. '30 MIN'."],
     ["   - Minutes: a number, used for time-logged totals. Optional."],
     ["   - Link: a URL. If set, an open-link button appears on the task. Optional."],
-    ["4. Save the file and upload it on the Import Roadmap page. This REPLACES any existing roadmap in the app."],
+    ["4. Save the file and upload it on the Roadmap page. It will be added alongside your existing roadmaps."],
   ]);
   XLSX.utils.book_append_sheet(wb, instructionsSheet, "Instructions");
 
@@ -243,11 +243,24 @@ export function validateRoadmap(rm: RoadmapFile): void {
   const issues: string[] = [];
 
   if (!rm.title) issues.push("Program title is required");
+  if (rm.title.length > 120) issues.push("Program title must be 120 characters or fewer");
+  if (rm.subtitle.length > 240) issues.push("Program subtitle must be 240 characters or fewer");
   if (!DATE_RE.test(rm.startDate)) issues.push(`Start date must look like YYYY-MM-DD (got "${rm.startDate}")`);
   if (!Number.isInteger(rm.totalWeeks) || rm.totalWeeks < 1 || rm.totalWeeks > 52) {
     issues.push("Total weeks must be a whole number between 1 and 52");
   }
   if (rm.tasks.length === 0) issues.push("Add at least one task");
+  if (rm.tasks.length > 5000) issues.push("A roadmap can contain at most 5,000 tasks");
+
+  const seenWeeks = new Set<number>();
+  rm.weeks.forEach((week, index) => {
+    if (!Number.isInteger(week.number) || week.number < 1 || (Number.isInteger(rm.totalWeeks) && week.number > rm.totalWeeks)) {
+      issues.push(`Week row ${index + 2}: number must be between 1 and ${rm.totalWeeks || "Total Weeks"}`);
+    }
+    if (seenWeeks.has(week.number)) issues.push(`Week row ${index + 2}: week ${week.number} is duplicated`);
+    if (week.focus.length > 240) issues.push(`Week row ${index + 2}: focus must be 240 characters or fewer`);
+    seenWeeks.add(week.number);
+  });
 
   rm.tasks.forEach((t, i) => {
     const row = i + 2; // account for header row in spreadsheets
@@ -258,10 +271,17 @@ export function validateRoadmap(rm: RoadmapFile): void {
       issues.push(`Task row ${row}: day must be an integer 1-7`);
     }
     if (!t.category) issues.push(`Task row ${row}: category is required`);
+    if (t.category.length > 40) issues.push(`Task row ${row}: category must be 40 characters or fewer`);
     if (!t.name) issues.push(`Task row ${row}: task name is required`);
+    if (t.name.length > 500) issues.push(`Task row ${row}: task name must be 500 characters or fewer`);
+    if (t.meta && t.meta.length > 120) issues.push(`Task row ${row}: duration label must be 120 characters or fewer`);
+    if (t.minutes !== undefined && (!Number.isInteger(t.minutes) || t.minutes < 0 || t.minutes > 1440)) {
+      issues.push(`Task row ${row}: minutes must be a whole number between 0 and 1440`);
+    }
     if (t.link && !/^https?:\/\//i.test(t.link)) {
       issues.push(`Task row ${row}: link must start with http:// or https://`);
     }
+    if (t.link && t.link.length > 2048) issues.push(`Task row ${row}: link must be 2,048 characters or fewer`);
   });
 
   if (issues.length > 0) throw new RoadmapValidationError(issues);

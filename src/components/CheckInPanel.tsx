@@ -41,7 +41,7 @@ export function CheckInPanel({
   }
 
   return (
-    <div className="relative flex flex-col gap-5 bg-[var(--panel-alt)] p-6" style={isLate ? { border: "1px solid #3a2523" } : undefined}>
+    <div className="relative min-w-0 flex flex-col gap-5 bg-[var(--panel-alt)] p-4 sm:p-6" style={isLate ? { border: "1px solid #3a2523" } : undefined}>
       {isLate && <CornerTicks color="var(--red)" />}
 
       <div className="flex flex-col gap-2">

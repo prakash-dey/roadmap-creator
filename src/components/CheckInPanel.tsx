@@ -1,9 +1,8 @@
 "use client";
 
 import { useTransition } from "react";
-import { useRouter } from "next/navigation";
 import type { DayVM } from "@/lib/data";
-import { confirmDay, markDayMissed, pushOpenTasksToDay, toggleTask } from "@/app/actions";
+import { confirmDay, markDayMissed, pushOpenTasksToDay, setTaskDone } from "@/app/actions";
 import { CornerTicks } from "@/components/CornerTicks";
 
 const STATUS_META: Record<DayVM["status"], { label: string; color: string }> = {
@@ -14,18 +13,21 @@ const STATUS_META: Record<DayVM["status"], { label: string; color: string }> = {
 };
 
 export function CheckInPanel({
+  roadmapId,
   day,
   isLate,
   pushTargetDateKey,
   pushTargetLabel,
+  onTaskChange,
 }: {
+  roadmapId: number;
   day: DayVM;
   isLate: boolean;
   pushTargetDateKey?: string;
   pushTargetLabel?: string;
+  onTaskChange: (taskId: number, done: boolean) => void;
 }) {
   const [isPending, startTransition] = useTransition();
-  const router = useRouter();
 
   const doneCount = day.tasks.filter((t) => t.done).length;
   const total = day.tasks.length;
@@ -36,7 +38,18 @@ export function CheckInPanel({
   function run(action: () => Promise<void>) {
     startTransition(async () => {
       await action();
-      router.refresh();
+    });
+  }
+
+  function toggle(taskId: number, currentDone: boolean) {
+    const nextDone = !currentDone;
+    startTransition(async () => {
+      onTaskChange(taskId, nextDone);
+      try {
+        await setTaskDone(roadmapId, taskId, nextDone);
+      } catch (error) {
+        console.error("Could not update task", error);
+      }
     });
   }
 
@@ -88,7 +101,7 @@ export function CheckInPanel({
             <div key={t.id} className="flex items-stretch" style={{ border: "1px solid var(--border-strong)", background: "var(--panel)" }}>
               <button
                 disabled={readOnly}
-                onClick={() => run(() => toggleTask(t.id))}
+                onClick={() => toggle(t.id, t.done)}
                 className="flex-1 flex gap-3 p-3 items-start text-left transition-colors disabled:cursor-default min-w-0"
               >
                 <div

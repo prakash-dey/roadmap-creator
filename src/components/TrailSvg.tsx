@@ -109,10 +109,14 @@ export function DesktopTrail({
   checkpoints,
   progress,
   today,
+  selectedWeek,
+  onSelectWeek,
 }: {
   checkpoints: CheckpointVM[];
   progress: number;
   today: number;
+  selectedWeek?: number;
+  onSelectWeek?: (weekNumber: number, trigger: SVGGElement) => void;
 }) {
   useTrailPlacement({
     pathId: "asc-path",
@@ -127,7 +131,7 @@ export function DesktopTrail({
   });
 
   return (
-    <svg viewBox="0 0 1200 250" width="100%" style={{ display: "block", overflow: "visible" }}>
+    <svg viewBox="0 0 1200 250" width="100%" role="group" aria-label="Interactive roadmap checkpoints" style={{ display: "block", overflow: "visible" }}>
       <defs>
         <pattern id="asc-hatch" width={7} height={7} patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
           <line x1={0} y1={0} x2={0} y2={7} stroke="#12141C" strokeWidth={3} opacity={0.45} />
@@ -140,19 +144,38 @@ export function DesktopTrail({
       <path id="asc-travel" d={DESKTOP_PATH} fill="none" stroke="#F5A524" strokeWidth={14} strokeLinecap="round" />
 
       {checkpoints.map((cp, i) => (
-        <g key={i} id={`asc-cp-${i}`}>
+        <g
+          key={i}
+          id={`asc-cp-${i}`}
+          role="button"
+          tabIndex={0}
+          aria-label={`Open week ${cp.number} tasks`}
+          aria-pressed={selectedWeek === cp.number}
+          className="trail-checkpoint cursor-pointer outline-none"
+          onClick={(event) => {
+            event.currentTarget.focus();
+            onSelectWeek?.(cp.number, event.currentTarget);
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              onSelectWeek?.(cp.number, event.currentTarget);
+            }
+          }}
+        >
+          <circle className="trail-focus-ring" r={24} fill="transparent" stroke={selectedWeek === cp.number ? "#F5A524" : "transparent"} strokeWidth={2} />
           {checkpointShape(cp.kind, cp.number, 13, 35)}
         </g>
       ))}
 
-      <g id="asc-you">
+      <g id="asc-you" pointerEvents="none">
         <line x1={0} y1={0} x2={0} y2={-30} stroke="#F5A524" strokeWidth={1.5} />
         <circle cx={0} cy={0} r={8} fill="#12141C" stroke="#F5A524" strokeWidth={3} />
         <text x={0} y={-38} textAnchor="middle" fill="#F5A524" style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: 1.2 }}>
           YOU
         </text>
       </g>
-      <g id="asc-today">
+      <g id="asc-today" pointerEvents="none">
         <line x1={0} y1={0} x2={0} y2={66} stroke="#F0554E" strokeWidth={1.5} strokeDasharray="3 4" />
         <path d="M-7,-11 L7,-11 L0,0 Z" fill="#F0554E" />
         <rect x={-38} y={66} width={76} height={24} fill="none" stroke="#F0554E" />
@@ -186,10 +209,14 @@ export function MobileTrail({
   checkpoints,
   progress,
   today,
+  selectedWeek,
+  onSelectWeek,
 }: {
   checkpoints: CheckpointVM[];
   progress: number;
   today: number;
+  selectedWeek?: number;
+  onSelectWeek?: (weekNumber: number, trigger: SVGGElement) => void;
 }) {
   useTrailPlacement({
     pathId: "asc-mpath",
@@ -206,8 +233,8 @@ export function MobileTrail({
   return (
     <svg
       viewBox="0 0 160 540"
-      role="img"
-      aria-label="Roadmap progress trail showing current progress and today's expected position"
+      role="group"
+      aria-label="Interactive roadmap checkpoints showing progress and today's expected position"
       className="h-auto w-full max-w-[160px]"
       style={{ display: "block", flex: "none", overflow: "visible" }}
     >
@@ -216,18 +243,37 @@ export function MobileTrail({
       <path id="asc-mtravel" d={MOBILE_PATH} fill="none" stroke="#F5A524" strokeWidth={11} strokeLinecap="round" />
 
       {checkpoints.map((cp, i) => (
-        <g key={i} id={`asc-mcp-${i}`}>
+        <g
+          key={i}
+          id={`asc-mcp-${i}`}
+          role="button"
+          tabIndex={0}
+          aria-label={`Open week ${cp.number} tasks`}
+          aria-pressed={selectedWeek === cp.number}
+          className="trail-checkpoint cursor-pointer outline-none"
+          onClick={(event) => {
+            event.currentTarget.focus();
+            onSelectWeek?.(cp.number, event.currentTarget);
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              onSelectWeek?.(cp.number, event.currentTarget);
+            }
+          }}
+        >
+          <circle className="trail-focus-ring" r={22} fill="transparent" stroke={selectedWeek === cp.number ? "#F5A524" : "transparent"} strokeWidth={2} />
           {mobileCheckpointShape(cp.kind)}
         </g>
       ))}
 
-      <g id="asc-myou">
+      <g id="asc-myou" pointerEvents="none">
         <line x1={0} y1={0} x2={46} y2={0} stroke="#F5A524" strokeWidth={1} />
         <text x={52} y={4} fill="#F5A524" style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.1em" }}>
           HERE
         </text>
       </g>
-      <g id="asc-mtoday">
+      <g id="asc-mtoday" pointerEvents="none">
         <line x1={0} y1={0} x2={46} y2={0} stroke="#F0554E" strokeWidth={1} strokeDasharray="3 3" />
         <text x={52} y={4} fill="#F0554E" style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.1em" }}>
           TODAY

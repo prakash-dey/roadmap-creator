@@ -1,36 +1,31 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { fromDateKey } from "@/lib/dates";
 import { requireUser } from "@/lib/auth/session";
 import { applyRoadmapImport } from "@/lib/import-roadmap";
 import { parseJsonToRoadmap, parseWorkbookToRoadmap, RoadmapValidationError } from "@/lib/roadmap-io";
-
-function revalidateEverything() {
-  revalidatePath("/", "layout");
-}
+import { roadmapCacheTag, roadmapListCacheTag } from "@/lib/cache-tags";
 
 function positiveId(value: number): number {
   if (!Number.isInteger(value) || value < 1) throw new Error("Invalid record identifier.");
   return value;
 }
 
-export async function toggleTask(taskId: number) {
+export async function setTaskDone(roadmapId: number, taskId: number, done: boolean) {
   const user = await requireUser();
-  const id = positiveId(taskId);
-  const task = await prisma.task.findFirst({
-    where: { id, day: { roadmap: { ownerId: user.id } } },
-    select: { done: true, day: { select: { roadmapId: true } } },
-  });
-  if (!task) throw new Error("Task not found.");
+  const roadmap = positiveId(roadmapId);
+  const task = positiveId(taskId);
+  if (typeof done !== "boolean") throw new Error("Invalid task state.");
 
-  await prisma.$transaction([
-    prisma.task.update({ where: { id }, data: { done: !task.done } }),
-    prisma.roadmap.update({ where: { id: task.day.roadmapId }, data: { updatedAt: new Date() } }),
-  ]);
-  revalidateEverything();
+  const result = await prisma.task.updateMany({
+    where: { id: task, day: { roadmapId: roadmap, roadmap: { ownerId: user.id } } },
+    data: { done },
+  });
+  if (result.count !== 1) throw new Error("Task not found.");
+  updateTag(roadmapCacheTag(user.id, roadmap));
 }
 
 export async function confirmDay(dayId: number) {
@@ -47,7 +42,7 @@ export async function confirmDay(dayId: number) {
     prisma.day.update({ where: { id }, data: { status, confirmedAt: new Date(), loggedMin } }),
     prisma.roadmap.update({ where: { id: day.roadmapId }, data: { updatedAt: new Date() } }),
   ]);
-  revalidateEverything();
+  updateTag(roadmapCacheTag(user.id, day.roadmapId));
 }
 
 export async function markDayMissed(dayId: number) {
@@ -61,7 +56,7 @@ export async function markDayMissed(dayId: number) {
     prisma.task.updateMany({ where: { dayId: id }, data: { done: false } }),
     prisma.roadmap.update({ where: { id: day.roadmapId }, data: { updatedAt: new Date() } }),
   ]);
-  revalidateEverything();
+  updateTag(roadmapCacheTag(user.id, day.roadmapId));
 }
 
 export type ImportRoadmapState = { error?: string };
@@ -85,7 +80,8 @@ export async function importRoadmapFile(_previous: ImportRoadmapState, formData:
     return { error: error instanceof Error ? error.message : "Could not import this file." };
   }
 
-  revalidateEverything();
+  updateTag(roadmapCacheTag(user.id, roadmapId));
+  updateTag(roadmapListCacheTag(user.id));
   redirect(`/?roadmap=${roadmapId}`);
 }
 
@@ -94,7 +90,8 @@ export async function deleteRoadmap(roadmapId: number) {
   const id = positiveId(roadmapId);
   const result = await prisma.roadmap.deleteMany({ where: { id, ownerId: user.id } });
   if (result.count !== 1) throw new Error("Roadmap not found.");
-  revalidateEverything();
+  updateTag(roadmapCacheTag(user.id, id));
+  updateTag(roadmapListCacheTag(user.id));
   redirect("/roadmap");
 }
 
@@ -122,5 +119,5 @@ export async function pushOpenTasksToDay(sourceDayId: number, targetDateKey: str
     prisma.day.update({ where: { id: source.id }, data: { rescheduleNote: note, status: remaining > 0 ? source.status : "MISSED" } }),
     prisma.roadmap.update({ where: { id: source.roadmapId }, data: { updatedAt: new Date() } }),
   ]);
-  revalidateEverything();
+  updateTag(roadmapCacheTag(user.id, source.roadmapId));
 }

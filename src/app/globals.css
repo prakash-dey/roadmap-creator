@@ -60,3 +60,53 @@ a:hover {
 button {
   font-family: inherit;
 }
+
+.week-detail-popover {
+  border-color: var(--amber);
+  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.52), 0 0 0 1px rgba(245, 165, 36, 0.08);
+}
+
+.week-detail-notch {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: var(--panel-alt);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.week-detail-notch-below {
+  top: -4px;
+  border-left: 1px solid var(--amber);
+  border-top: 1px solid var(--amber);
+}
+
+.week-detail-notch-above {
+  bottom: -4px;
+  border-bottom: 1px solid var(--amber);
+  border-right: 1px solid var(--amber);
+}
+
+.week-detail-corner {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  pointer-events: none;
+}
+
+.week-detail-corner::before,
+.week-detail-corner::after {
+  content: "";
+  position: absolute;
+  background: var(--amber);
+}
+
+.week-detail-corner::before { width: 5px; height: 1px; top: 2px; left: 0; }
+.week-detail-corner::after { width: 1px; height: 5px; top: 0; left: 2px; }
+.week-detail-corner-tl { left: -3px; top: -3px; }
+.week-detail-corner-tr { right: -3px; top: -3px; }
+.week-detail-corner-bl { left: -3px; bottom: -3px; }
+.week-detail-corner-br { right: -3px; bottom: -3px; }
+
+.trail-checkpoint:focus-visible .trail-focus-ring {
+  stroke: var(--amber);
+}

@@ -3,11 +3,11 @@ import { redirect } from "next/navigation";
 import { getProgramView } from "@/lib/data";
 import { requireUser } from "@/lib/auth/session";
 import { TopBar } from "@/components/TopBar";
-import { DesktopTrail, MobileTrail } from "@/components/TrailSvg";
+import { TrailExplorer } from "@/components/TrailExplorer";
 import { StatsStrip } from "@/components/StatsStrip";
 import { DashboardWeekSection } from "@/components/DashboardWeekSection";
 
-export const dynamic = "force-dynamic";
+export const instant = false;
 
 export default async function Home({ searchParams }: { searchParams: Promise<{ roadmap?: string }> }) {
   const user = await requireUser();
@@ -79,12 +79,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ r
           </div>
         </div>
 
-        <div className="hidden md:block pb-12">
-          <DesktopTrail checkpoints={p.checkpoints} progress={p.progressFraction} today={p.todayFraction} />
-        </div>
-        <div className="md:hidden flex justify-center py-4">
-          <MobileTrail checkpoints={p.checkpoints} progress={p.progressFraction} today={p.todayFraction} />
-        </div>
+        <TrailExplorer weeks={p.weekDetails} progress={p.progressFraction} today={p.todayFraction} />
 
         <StatsStrip
           daysComplete={p.daysComplete}
@@ -99,6 +94,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ r
       </div>
 
       <DashboardWeekSection
+        roadmapId={p.roadmapId}
         days={p.currentWeekDays}
         todayDateKey={p.today.dateKey}
         weekNumber={p.currentWeekNumber}

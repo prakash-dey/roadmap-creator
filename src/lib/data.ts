@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { addDays, dateOnly, formatLongDate, formatMonthDay, toDateKey, weekdayShort } from "@/lib/dates";
 import { colorForCategory } from "@/lib/program-content";
 import type { DayStatus } from "@/generated/prisma/enums";
+import { cacheLife, cacheTag } from "next/cache";
+import { roadmapCacheTag, roadmapListCacheTag } from "@/lib/cache-tags";
 
 export type TaskVM = {
   id: number;
@@ -40,6 +42,25 @@ export type CheckpointVM = {
   kind: "passed" | "current" | "upcoming" | "finish";
 };
 
+export type TrailTaskState = "completed" | "in-progress" | "pending";
+
+export type WeekDetailVM = {
+  number: number;
+  focus: string;
+  kind: CheckpointVM["kind"];
+  completed: number;
+  inProgress: number;
+  pending: number;
+  tasks: Array<{
+    id: number;
+    name: string;
+    category: string;
+    color: string;
+    dayLabel: string;
+    state: TrailTaskState;
+  }>;
+};
+
 export type CoverageVM = { category: string; label: string; color: string; done: number; total: number };
 
 export type RecentLogEntryVM = {
@@ -63,6 +84,7 @@ export type ProgramView = {
   today: DayVM;
   currentWeekDays: DayVM[];
   checkpoints: CheckpointVM[];
+  weekDetails: WeekDetailVM[];
   progressFraction: number; // 0..1 actual confirmed progress along the trail
   todayFraction: number; // 0..1 calendar-expected position along the trail
   paceDays: number; // negative = behind, positive = ahead
@@ -88,6 +110,10 @@ export type RoadmapSummary = {
 };
 
 export async function listRoadmaps(ownerId: string): Promise<RoadmapSummary[]> {
+  "use cache";
+  cacheLife("minutes");
+  cacheTag(roadmapListCacheTag(ownerId));
+
   const roadmaps = await prisma.roadmap.findMany({
     where: { ownerId },
     orderBy: { updatedAt: "desc" },
@@ -166,6 +192,9 @@ function computeTodayDayIndex(programStart: Date): number {
 }
 
 export async function getProgramView(ownerId: string, roadmapId?: number): Promise<ProgramView | null> {
+  "use cache";
+  cacheLife("minutes");
+
   const roadmap = await prisma.roadmap.findFirst({
     where: { ownerId, ...(roadmapId ? { id: roadmapId } : {}) },
     orderBy: { updatedAt: "desc" },
@@ -175,6 +204,7 @@ export async function getProgramView(ownerId: string, roadmapId?: number): Promi
     },
   });
   if (!roadmap) return null;
+  cacheTag(roadmapCacheTag(ownerId, roadmap.id));
 
   const totalWeeks = roadmap.programWeeksCount;
   const totalDays = totalWeeks * 7;
@@ -197,6 +227,32 @@ export async function getProgramView(ownerId: string, roadmapId?: number): Promi
     if (n < currentWeekNumber) return { number: n, kind: "passed" as const };
     if (n === currentWeekNumber) return { number: n, kind: "current" as const };
     return { number: n, kind: "upcoming" as const };
+  });
+
+  const weekDetails: WeekDetailVM[] = roadmap.weeks.map((weekItem) => {
+    const checkpoint = checkpoints[weekItem.number - 1];
+    const tasks = dayVMs
+      .filter((day) => day.weekNumber === weekItem.number)
+      .flatMap((day) => {
+        const dayHasProgress = day.status === "RECOVERED" || day.tasks.some((task) => task.done);
+        return day.tasks.map((task) => ({
+          id: task.id,
+          name: task.name,
+          category: task.category,
+          color: task.color,
+          dayLabel: `${day.weekdayShort} · ${day.dateLabel}`,
+          state: (task.done ? "completed" : dayHasProgress ? "in-progress" : "pending") as TrailTaskState,
+        }));
+      });
+    return {
+      number: weekItem.number,
+      focus: weekItem.focus,
+      kind: checkpoint.kind,
+      completed: tasks.filter((task) => task.state === "completed").length,
+      inProgress: tasks.filter((task) => task.state === "in-progress").length,
+      pending: tasks.filter((task) => task.state === "pending").length,
+      tasks,
+    };
   });
 
   const pastDays = dayVMs.filter((d) => d.isPast);
@@ -275,6 +331,7 @@ export async function getProgramView(ownerId: string, roadmapId?: number): Promi
     today: todayVM,
     currentWeekDays,
     checkpoints,
+    weekDetails,
     progressFraction: clamp01(daysComplete / totalDays),
     todayFraction: clamp01(todayDayIndex / totalDays),
     paceDays,

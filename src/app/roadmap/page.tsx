@@ -4,7 +4,7 @@ import { RoadmapList } from "@/components/RoadmapList";
 import { listRoadmaps } from "@/lib/data";
 import { requireUser } from "@/lib/auth/session";
 
-export const dynamic = "force-dynamic";
+export const instant = false;
 
 export default async function RoadmapPage() {
   const user = await requireUser();

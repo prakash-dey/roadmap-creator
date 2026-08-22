@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useOptimistic, useState } from "react";
 import type { CoverageVM, DayVM, RecentLogEntryVM } from "@/lib/data";
 import { addDays, formatMonthDay, fromDateKey, toDateKey } from "@/lib/dates";
 import { WeekGrid } from "@/components/WeekGrid";
@@ -9,6 +9,7 @@ import { CoverageBars } from "@/components/CoverageBars";
 import { RecentLog } from "@/components/RecentLog";
 
 export function DashboardWeekSection({
+  roadmapId,
   days,
   todayDateKey,
   weekNumber,
@@ -17,6 +18,7 @@ export function DashboardWeekSection({
   recentLog,
   weekLoad,
 }: {
+  roadmapId: number;
   days: DayVM[];
   todayDateKey: string;
   weekNumber: number;
@@ -26,8 +28,19 @@ export function DashboardWeekSection({
   weekLoad: { totalTasks: number; confirmedDays: number; openDays: number; lapsedDays: number };
 }) {
   const [selectedDateKey, setSelectedDateKey] = useState(todayDateKey);
+  const [localDays, setOptimisticTask] = useOptimistic(
+    days,
+    (current, change: { taskId: number; done: boolean }) => current.map((day) => ({
+      ...day,
+      tasks: day.tasks.map((task) => task.id === change.taskId ? { ...task, done: change.done } : task),
+    })),
+  );
 
-  const selectedDay = days.find((d) => d.dateKey === selectedDateKey) ?? days.find((d) => d.dateKey === todayDateKey) ?? days[0];
+  const selectedDay = localDays.find((d) => d.dateKey === selectedDateKey) ?? localDays.find((d) => d.dateKey === todayDateKey) ?? localDays[0];
+
+  function setTaskDone(taskId: number, done: boolean) {
+    setOptimisticTask({ taskId, done });
+  }
 
   const isLate = selectedDay.isPast && selectedDay.status !== "CONFIRMED" && selectedDay.tasks.length > 0;
   const nextDate = addDays(fromDateKey(selectedDay.dateKey), 1);
@@ -54,7 +67,7 @@ export function DashboardWeekSection({
           </div>
         </div>
 
-        <WeekGrid days={days} selectedDateKey={selectedDay.dateKey} onSelect={setSelectedDateKey} />
+        <WeekGrid days={localDays} selectedDateKey={selectedDay.dateKey} onSelect={setSelectedDateKey} />
 
         <div className="flex gap-6 flex-wrap pt-1.5 font-mono text-[11px]" style={{ borderTop: "1px solid #1a1e2a", color: "var(--muted-2)" }}>
           <span>
@@ -79,7 +92,7 @@ export function DashboardWeekSection({
 
       {/* On narrow screens this stacks below the content above (single grid
           column); at lg+ it becomes the right-hand side rail. */}
-      <CheckInPanel day={selectedDay} isLate={isLate} pushTargetDateKey={pushTargetDateKey} pushTargetLabel={pushTargetLabel} />
+      <CheckInPanel roadmapId={roadmapId} day={selectedDay} isLate={isLate} pushTargetDateKey={pushTargetDateKey} pushTargetLabel={pushTargetLabel} onTaskChange={setTaskDone} />
     </div>
   );
 }

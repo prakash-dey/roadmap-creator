@@ -26,7 +26,7 @@ export function AuthForm({ mode, action }: { mode: "sign-in" | "sign-up"; action
         </div>
 
         {state?.error && <p className="mt-4 text-sm" style={{ color: "var(--red-soft)" }}>{state.error}</p>}
-
+ 
         <button
           type="submit"
           disabled={pending}

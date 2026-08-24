@@ -5,6 +5,7 @@ import type { DayVM } from "@/lib/data";
 import { confirmDay, markDayMissed, pushOpenTasksToDay, setTaskDone } from "@/app/actions";
 import { CornerTicks } from "@/components/CornerTicks";
 
+
 const STATUS_META: Record<DayVM["status"], { label: string; color: string }> = {
   PENDING: { label: "TODAY", color: "var(--amber)" },
   CONFIRMED: { label: "CONFIRMED", color: "var(--green)" },

@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getProgramView } from "@/lib/data";
+import { getProgramView, listRoadmaps } from "@/lib/data";
 import { requireUser } from "@/lib/auth/session";
 import { TopBar } from "@/components/TopBar";
 import { TrailExplorer } from "@/components/TrailExplorer";
@@ -13,7 +12,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ r
   const user = await requireUser();
   const { roadmap } = await searchParams;
   const requestedId = roadmap && /^\d+$/.test(roadmap) ? Number(roadmap) : undefined;
-  const p = await getProgramView(user.id, requestedId);
+  const [p, roadmaps] = await Promise.all([getProgramView(user.id, requestedId), listRoadmaps(user.id)]);
   if (!p) redirect("/roadmap");
 
   const behindDays = p.paceDays < 0 ? -p.paceDays : 0;
@@ -34,13 +33,9 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ r
         endLabel={p.programEndLabel}
         weekNumber={p.currentWeekNumber}
         totalWeeks={p.totalWeeks}
+        roadmaps={roadmaps}
+        currentRoadmapId={p.roadmapId}
       />
-
-      <div className="flex justify-end px-6 sm:px-10 pt-4">
-        <Link href="/roadmap" className="font-mono text-[11px] tracking-[0.1em]" style={{ color: "var(--muted-2)" }}>
-          MANAGE ROADMAPS →
-        </Link>
-      </div>
 
       {/* hero trail */}
       <div className="px-6 sm:px-10 pt-4 pb-5">

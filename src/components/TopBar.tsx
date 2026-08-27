@@ -1,4 +1,5 @@
 import { BoardSwitcher } from "@/components/BoardSwitcher";
+import { CountdownTimer } from "@/components/CountdownTimer";
 import type { RoadmapSummary } from "@/lib/data";
 
 export function TopBar({
@@ -21,7 +22,10 @@ export function TopBar({
   currentRoadmapId: number;
 }) {
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-5 px-6 sm:px-10" style={{ borderBottom: "1px solid var(--border)" }}>
+    <div
+      className="flex flex-col gap-3 py-5 px-6 sm:grid sm:grid-cols-[1fr_auto_1fr] sm:items-center sm:gap-4 sm:px-10"
+      style={{ borderBottom: "1px solid var(--border)" }}
+    >
       <div className="flex items-center gap-3.5 flex-wrap">
         <BoardSwitcher roadmaps={roadmaps} currentRoadmapId={currentRoadmapId} />
         <div className="flex items-baseline gap-3.5 flex-wrap">
@@ -31,7 +35,12 @@ export function TopBar({
           </div>
         </div>
       </div>
-      <div className="flex flex-wrap items-center gap-3 sm:gap-7">
+
+      <div className="order-first sm:order-0 flex justify-center">
+        <CountdownTimer />
+      </div>
+
+      <div className="flex flex-wrap items-center justify-start gap-3 sm:justify-end sm:gap-7">
         <div className="whitespace-nowrap font-mono text-[11px] sm:text-[12px] tracking-[0.08em] sm:tracking-[0.1em]" style={{ color: "var(--muted)" }}>
           {startLabel} → {endLabel}
         </div>

@@ -90,13 +90,13 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ r
 
       <DashboardWeekSection
         roadmapId={p.roadmapId}
-        days={p.currentWeekDays}
+        allDays={p.allDays}
         todayDateKey={p.today.dateKey}
-        weekNumber={p.currentWeekNumber}
-        weekFocus={p.weekFocus}
+        currentWeekNumber={p.currentWeekNumber}
+        totalWeeks={p.totalWeeks}
+        weekDetails={p.weekDetails}
         coverage={p.coverage}
         recentLog={p.recentLog}
-        weekLoad={p.weekLoad}
       />
     </div>
   );

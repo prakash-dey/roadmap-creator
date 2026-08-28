@@ -83,6 +83,7 @@ export type ProgramView = {
   weekFocus: string;
   today: DayVM;
   currentWeekDays: DayVM[];
+  allDays: DayVM[];
   checkpoints: CheckpointVM[];
   weekDetails: WeekDetailVM[];
   progressFraction: number; // 0..1 actual confirmed progress along the trail
@@ -330,6 +331,7 @@ export async function getProgramView(ownerId: string, roadmapId?: number): Promi
     weekFocus: week?.focus ?? "",
     today: todayVM,
     currentWeekDays,
+    allDays: dayVMs,
     checkpoints,
     weekDetails,
     progressFraction: clamp01(daysComplete / totalDays),

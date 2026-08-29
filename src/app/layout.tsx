@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter, JetBrains_Mono } from "next/font/google";
+import { RouteTransitionProvider } from "@/components/RouteTransitionProvider";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -32,7 +33,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${fraunces.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full">{children}</body>
+      <body className="min-h-full">
+        <RouteTransitionProvider>{children}</RouteTransitionProvider>
+      </body>
     </html>
   );
 }

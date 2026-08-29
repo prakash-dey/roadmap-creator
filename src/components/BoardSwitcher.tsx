@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { RoadmapSummary } from "@/lib/data";
+import { useRouteTransition } from "@/components/RouteTransitionProvider";
 
 export function BoardSwitcher({
   roadmaps,
@@ -13,6 +14,7 @@ export function BoardSwitcher({
 }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+  const { navigate } = useRouteTransition();
 
   useEffect(() => {
     if (!open) return;
@@ -60,11 +62,21 @@ export function BoardSwitcher({
           <div className="flex flex-col overflow-y-auto">
             {roadmaps.map((roadmap) => {
               const active = roadmap.id === currentRoadmapId;
+              const href = `/?roadmap=${roadmap.id}`;
               return (
                 <Link
                   key={roadmap.id}
-                  href={`/?roadmap=${roadmap.id}`}
-                  onClick={() => setOpen(false)}
+                  href={href}
+                  onClick={(e) => {
+                    setOpen(false);
+                    if (active || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+                    // Show the shimmer immediately and kick off the fetch in
+                    // the background, instead of waiting on the plain <Link>
+                    // navigation (which leaves the old page feeling stuck
+                    // until the new roadmap's data resolves).
+                    e.preventDefault();
+                    navigate(href);
+                  }}
                   className="flex min-w-0 flex-col gap-0.5 px-4 py-2.5 transition-colors hover:brightness-110"
                   style={{
                     background: active ? "var(--panel-alt)" : "transparent",

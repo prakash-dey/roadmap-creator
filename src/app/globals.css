@@ -110,3 +110,21 @@ button {
 .trail-checkpoint:focus-visible .trail-focus-ring {
   stroke: var(--amber);
 }
+
+.skeleton {
+  background: linear-gradient(90deg, var(--panel-alt) 0%, var(--border-strong) 50%, var(--panel-alt) 100%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.6s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer {
+  0% { background-position: 150% 0; }
+  100% { background-position: -50% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+    background: var(--panel-alt);
+  }
+}

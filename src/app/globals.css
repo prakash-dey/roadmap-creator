@@ -128,3 +128,35 @@ button {
     background: var(--panel-alt);
   }
 }
+
+/* "You are here" live-position markers on the trail: an expanding, fading
+   ring behind a steadily blinking core dot — the familiar live-location idiom. */
+.current-position-ping {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: current-position-ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.current-position-dot {
+  animation: current-position-blink 1.6s ease-in-out infinite;
+}
+
+@keyframes current-position-ping {
+  0% { opacity: 0.6; transform: scale(1); }
+  100% { opacity: 0; transform: scale(3); }
+}
+
+@keyframes current-position-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .current-position-ping {
+    animation: none;
+    opacity: 0;
+  }
+  .current-position-dot {
+    animation: none;
+  }
+}

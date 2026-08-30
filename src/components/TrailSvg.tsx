@@ -8,26 +8,55 @@ const DESKTOP_PATH =
 const MOBILE_PATH =
   "M58,24 Q58,46 71,68 T76,112 T70,156 T57,200 T44,244 T40,288 T47,332 T60,376 T72,420 T76,464 T69,508";
 
+/** A 2n-point star path (n outer tips), centered on the origin. */
+function starPath(points: number, outerR: number, innerR: number): string {
+  const step = Math.PI / points;
+  const coords: string[] = [];
+  for (let i = 0; i < points * 2; i++) {
+    const r = i % 2 === 0 ? outerR : innerR;
+    const angle = i * step - Math.PI / 2;
+    coords.push(`${i === 0 ? "M" : "L"}${(Math.cos(angle) * r).toFixed(2)},${(Math.sin(angle) * r).toFixed(2)}`);
+  }
+  return `${coords.join(" ")} Z`;
+}
+
+function achievementBadge(r: number, rayInset: number, rayOutset: number, rayCount: number) {
+  return (
+    <>
+      <g stroke="#FFB63F" strokeWidth={1.5} strokeLinecap="round" opacity={0.65}>
+        {Array.from({ length: rayCount }).map((_, i) => {
+          const angle = (i * 2 * Math.PI) / rayCount;
+          return (
+            <line
+              key={i}
+              x1={Math.cos(angle) * rayInset}
+              y1={Math.sin(angle) * rayInset}
+              x2={Math.cos(angle) * rayOutset}
+              y2={Math.sin(angle) * rayOutset}
+            />
+          );
+        })}
+      </g>
+      <circle r={r} fill="#241B08" stroke="#F5A524" strokeWidth={3} />
+      <path d={starPath(5, r - 4, (r - 4) * 0.42)} fill="#FFB63F" stroke="#F5A524" strokeWidth={1} strokeLinejoin="round" />
+    </>
+  );
+}
+
 function checkpointShape(kind: CheckpointVM["kind"], number: number, radius: number, labelDy: number) {
   const label = String(number).padStart(2, "0");
   const textStyle = { fontFamily: "var(--font-mono)", fontSize: 11 } as const;
 
   if (kind === "finish") {
-    const r = radius + 3;
-    return (
-      <>
-        <rect x={-r} y={-r} width={r * 2} height={r * 2} fill="#12141C" stroke="#5B9DFF" strokeWidth={3} />
-        <text x={0} y={labelDy} textAnchor="middle" fill="#5B9DFF" style={{ ...textStyle, letterSpacing: "0.02em" }}>
-          {label}
-        </text>
-      </>
-    );
+    // The trail's end reads as an earned badge, not just another checkpoint.
+    return achievementBadge(radius + 6, radius + 8, radius + 14, 8);
   }
   if (kind === "current") {
     return (
       <>
+        <circle className="current-position-ping" cx={0} cy={0} r={6} fill="#F5A524" />
         <circle cx={0} cy={0} r={radius + 4} fill="#12141C" stroke="#F5A524" strokeWidth={3} />
-        <circle cx={0} cy={0} r={6} fill="#F5A524" />
+        <circle className="current-position-dot" cx={0} cy={0} r={6} fill="#F5A524" />
         <text x={0} y={labelDy} textAnchor="middle" fill="#F5A524" style={{ ...textStyle, letterSpacing: "0.06em" }}>
           {label}
         </text>
@@ -170,7 +199,9 @@ export function DesktopTrail({
 
       <g id="asc-you" pointerEvents="none">
         <line x1={0} y1={0} x2={0} y2={-30} stroke="#F5A524" strokeWidth={1.5} />
+        <circle className="current-position-ping" cx={0} cy={0} r={8} fill="#F5A524" />
         <circle cx={0} cy={0} r={8} fill="#12141C" stroke="#F5A524" strokeWidth={3} />
+        <circle className="current-position-dot" cx={0} cy={0} r={3} fill="#F5A524" />
         <text x={0} y={-38} textAnchor="middle" fill="#F5A524" style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: 1.2 }}>
           YOU
         </text>
@@ -189,13 +220,14 @@ export function DesktopTrail({
 
 function mobileCheckpointShape(kind: CheckpointVM["kind"]) {
   if (kind === "finish") {
-    return <rect x={-9} y={-9} width={18} height={18} fill="#12141C" stroke="#5B9DFF" strokeWidth={3} />;
+    return achievementBadge(13, 15, 19, 8);
   }
   if (kind === "current") {
     return (
       <>
+        <circle className="current-position-ping" cx={0} cy={0} r={5} fill="#F5A524" />
         <circle cx={0} cy={0} r={14} fill="#12141C" stroke="#F5A524" strokeWidth={3} />
-        <circle cx={0} cy={0} r={5} fill="#F5A524" />
+        <circle className="current-position-dot" cx={0} cy={0} r={5} fill="#F5A524" />
       </>
     );
   }
@@ -269,6 +301,8 @@ export function MobileTrail({
 
       <g id="asc-myou" pointerEvents="none">
         <line x1={0} y1={0} x2={46} y2={0} stroke="#F5A524" strokeWidth={1} />
+        <circle className="current-position-ping" cx={0} cy={0} r={5} fill="#F5A524" />
+        <circle className="current-position-dot" cx={0} cy={0} r={3} fill="#F5A524" />
         <text x={52} y={4} fill="#F5A524" style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.1em" }}>
           HERE
         </text>

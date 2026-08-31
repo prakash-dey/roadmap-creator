@@ -1,5 +1,6 @@
 import { BoardSwitcher } from "@/components/BoardSwitcher";
 import { CountdownTimer } from "@/components/CountdownTimer";
+import { UserMenu } from "@/components/UserMenu";
 import type { RoadmapSummary } from "@/lib/data";
 
 export function TopBar({
@@ -11,6 +12,8 @@ export function TopBar({
   totalWeeks,
   roadmaps,
   currentRoadmapId,
+  userName,
+  userEmail,
 }: {
   title: string;
   subtitle: string;
@@ -20,6 +23,8 @@ export function TopBar({
   totalWeeks: number;
   roadmaps: RoadmapSummary[];
   currentRoadmapId: number;
+  userName: string;
+  userEmail: string;
 }) {
   return (
     <div
@@ -50,6 +55,7 @@ export function TopBar({
         >
           WEEK {String(weekNumber).padStart(2, "0")} / {totalWeeks}
         </div>
+        <UserMenu name={userName} email={userEmail} />
       </div>
     </div>
   );

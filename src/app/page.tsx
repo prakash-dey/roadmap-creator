@@ -35,6 +35,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ r
         totalWeeks={p.totalWeeks}
         roadmaps={roadmaps}
         currentRoadmapId={p.roadmapId}
+        userName={user.name ?? ""}
+        userEmail={user.email ?? ""}
       />
 
       {/* hero trail */}

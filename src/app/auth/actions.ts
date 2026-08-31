@@ -25,3 +25,8 @@ export async function signUpWithEmail(_previous: AuthState, formData: FormData):
   if (error) return { error: error.message || "Unable to create your account." };
   redirect("/");
 }
+
+export async function signOut(): Promise<void> {
+  await auth.signOut();
+  redirect("/auth/sign-in");
+}

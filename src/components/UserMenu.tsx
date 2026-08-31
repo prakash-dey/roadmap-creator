@@ -2,14 +2,7 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import { signOut } from "@/app/auth/actions";
-
-function initialsFor(name: string, email: string): string {
-  const source = name.trim() || email.trim();
-  if (!source) return "?";
-  const parts = source.split(/\s+/).filter(Boolean);
-  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
-  return source.slice(0, 2).toUpperCase();
-}
+import { Avatar } from "@/components/Avatar";
 
 export function UserMenu({ name, email }: { name: string; email: string }) {
   const [open, setOpen] = useState(false);
@@ -39,14 +32,13 @@ export function UserMenu({ name, email }: { name: string; email: string }) {
         aria-label="Account menu"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className="flex h-9 w-9 items-center justify-center rounded-full font-mono text-[11px] font-bold cursor-pointer transition-colors hover:brightness-110"
+        className="flex items-center justify-center rounded-full cursor-pointer transition-all hover:brightness-110"
         style={{
-          border: `1px solid ${open ? "var(--amber)" : "var(--border-strong)"}`,
-          background: open ? "var(--panel-alt)" : "transparent",
-          color: "var(--amber)",
+          outline: `1px solid ${open ? "var(--amber)" : "transparent"}`,
+          outlineOffset: 2,
         }}
       >
-        {initialsFor(name, email)}
+        <Avatar name={name} email={email} size={36} />
       </button>
 
       {open && (
@@ -54,13 +46,16 @@ export function UserMenu({ name, email }: { name: string; email: string }) {
           className="absolute right-0 top-[calc(100%+8px)] z-50 flex w-[260px] flex-col overflow-hidden"
           style={{ border: "1px solid var(--border-strong)", background: "var(--panel)", boxShadow: "0 18px 45px rgba(0,0,0,.5)" }}
         >
-          <div className="flex flex-col gap-0.5 px-4 py-3" style={{ borderBottom: "1px solid var(--border)" }}>
-            <span className="truncate font-serif text-[15px]" style={{ color: "var(--text)" }}>
-              {name || "Your account"}
-            </span>
-            <span className="truncate font-mono text-[10px] tracking-[0.08em]" style={{ color: "var(--muted-2)" }}>
-              {email}
-            </span>
+          <div className="flex items-center gap-3 px-4 py-3" style={{ borderBottom: "1px solid var(--border)" }}>
+            <Avatar name={name} email={email} size={40} />
+            <div className="flex min-w-0 flex-col gap-0.5">
+              <span className="truncate font-serif text-[15px]" style={{ color: "var(--text)" }}>
+                {name || "Your account"}
+              </span>
+              <span className="truncate font-mono text-[10px] tracking-[0.08em]" style={{ color: "var(--muted-2)" }}>
+                {email}
+              </span>
+            </div>
           </div>
 
           <button

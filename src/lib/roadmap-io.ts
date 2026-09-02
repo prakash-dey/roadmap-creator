@@ -160,6 +160,7 @@ export function parseWorkbookToRoadmap(buffer: ArrayBuffer): RoadmapFile {
   const tasksWs = wb.Sheets["Tasks"];
   if (!tasksWs) throw new RoadmapValidationError(['Missing "Tasks" sheet']);
   const taskRows = sheetToRows(tasksWs).slice(1); // drop header
+  if (taskRows.length > 5000) throw new RoadmapValidationError(["A roadmap can contain at most 5,000 tasks"]);
 
   const tasks: RoadmapTaskRow[] = taskRows
     .filter((r) => r.some((c) => toStr(c) !== ""))
@@ -208,6 +209,8 @@ export function parseJsonToRoadmap(text: string): RoadmapFile {
   const r = raw as Record<string, unknown>;
   const tasksArr = Array.isArray(r.tasks) ? r.tasks : [];
   const weeksArr = Array.isArray(r.weeks) ? r.weeks : [];
+  if (tasksArr.length > 5000) throw new RoadmapValidationError(["A roadmap can contain at most 5,000 tasks"]);
+  if (weeksArr.length > 52) throw new RoadmapValidationError(["A roadmap can contain at most 52 weeks"]);
 
   const roadmap: RoadmapFile = {
     title: toStr(r.title) || "My Roadmap",

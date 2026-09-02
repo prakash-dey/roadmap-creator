@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
-import { addDays, dateOnly, formatLongDate, formatMonthDay, toDateKey, weekdayShort } from "@/lib/dates";
+import { addDays, dayOfMonth, formatLongDate, formatMonthDay, fromDateKey, toDateKey, weekdayShort } from "@/lib/dates";
+import { dayIndexFromKeys } from "@/lib/timezone";
 import { colorForCategory } from "@/lib/program-content";
 import type { DayStatus } from "@/generated/prisma/enums";
 import { cacheLife, cacheTag } from "next/cache";
@@ -160,7 +161,7 @@ function toDayVM(
     dateLabel: formatMonthDay(day.date),
     longDateLabel: formatLongDate(day.date),
     weekdayShort: weekdayShort(day.date),
-    dayNumber: day.date.getDate(),
+    dayNumber: dayOfMonth(day.date),
     weekNumber: day.week.number,
     dayOfWeek: day.dayOfWeek,
     status: day.status,
@@ -187,12 +188,11 @@ function toDayVM(
   };
 }
 
-function computeTodayDayIndex(programStart: Date): number {
-  const today = dateOnly(new Date());
-  return Math.round((today.getTime() - dateOnly(programStart).getTime()) / 86400000) + 1;
-}
-
-export async function getProgramView(ownerId: string, roadmapId?: number): Promise<ProgramView | null> {
+export async function getProgramView(
+  ownerId: string,
+  roadmapId: number | undefined,
+  todayKey: string
+): Promise<ProgramView | null> {
   "use cache";
   cacheLife("minutes");
 
@@ -209,12 +209,15 @@ export async function getProgramView(ownerId: string, roadmapId?: number): Promi
 
   const totalWeeks = roadmap.programWeeksCount;
   const totalDays = totalWeeks * 7;
-  const programStart = dateOnly(roadmap.programStartDate);
-  const todayDayIndex = computeTodayDayIndex(programStart);
+  const programStartKey = toDateKey(roadmap.programStartDate);
+  const programStart = fromDateKey(programStartKey);
+  const todayDayIndex = dayIndexFromKeys(programStartKey, todayKey);
   const currentWeekNumber = Math.min(totalWeeks, Math.max(1, Math.ceil(todayDayIndex / 7)));
 
   const dayVMs = roadmap.days.map((day, index) => toDayVM(day, todayDayIndex, index + 1));
-  const todayVM = dayVMs.find((d) => d.isToday) ?? dayVMs[dayVMs.length - 1];
+  const todayVM =
+    dayVMs.find((d) => d.isToday) ??
+    (todayDayIndex < 1 ? dayVMs[0] : dayVMs[dayVMs.length - 1]);
 
   const week = roadmap.weeks.find((item) => item.number === currentWeekNumber);
 
@@ -257,14 +260,21 @@ export async function getProgramView(ownerId: string, roadmapId?: number): Promi
   });
 
   const pastDays = dayVMs.filter((d) => d.isPast);
-  const daysComplete = pastDays.filter((d) => d.status === "CONFIRMED" || d.status === "RECOVERED").length;
-  const calendarElapsed = todayDayIndex - 1; // full days before today
+  // A review-only day with nothing scheduled asks nothing of the user, so it
+  // counts as settled and never drags pace or breaks a streak.
+  const isFreeDay = (d: DayVM) => d.reviewOnly && d.tasks.length === 0;
+  const daysComplete = pastDays.filter(
+    (d) => d.status === "CONFIRMED" || d.status === "RECOVERED" || isFreeDay(d)
+  ).length;
+  const calendarElapsed = pastDays.length; // full days before today
   const paceDays = daysComplete - calendarElapsed;
 
   // Streak: consecutive CONFIRMED days walking back from yesterday. A
-  // RECOVERED (late, partial-credit) day breaks the streak by design.
+  // RECOVERED (late, partial-credit) day breaks the streak by design; a
+  // free day is transparent to it.
   let streak = 0;
   for (let i = pastDays.length - 1; i >= 0; i--) {
+    if (isFreeDay(pastDays[i])) continue;
     if (pastDays[i].status === "CONFIRMED") streak++;
     else break;
   }
@@ -314,7 +324,7 @@ export async function getProgramView(ownerId: string, roadmapId?: number): Promi
   const weekLoad = {
     totalTasks: currentWeekDays.reduce((s, d) => s + d.tasks.length, 0),
     confirmedDays: currentWeekDays.filter((d) => d.status === "CONFIRMED").length,
-    openDays: currentWeekDays.filter((d) => d.status === "PENDING").length,
+    openDays: currentWeekDays.filter((d) => d.status === "PENDING" && !(d.isPast && isFreeDay(d))).length,
     lapsedDays: currentWeekDays.filter((d) => d.status === "MISSED" || d.status === "RECOVERED").length,
   };
 

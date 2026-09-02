@@ -17,14 +17,14 @@ export function CheckInPanel({
   roadmapId,
   day,
   isLate,
-  pushTargetDateKey,
+  pushTargetDayId,
   pushTargetLabel,
   onTaskChange,
 }: {
   roadmapId: number;
   day: DayVM;
   isLate: boolean;
-  pushTargetDateKey?: string;
+  pushTargetDayId?: number;
   pushTargetLabel?: string;
   onTaskChange: (taskId: number, done: boolean) => void;
 }) {
@@ -176,7 +176,10 @@ export function CheckInPanel({
           {!isLate && (
             <button
               disabled={isPending}
-              onClick={() => run(() => markDayMissed(day.id))}
+              onClick={() => {
+                if (typeof window !== "undefined" && !window.confirm("Mark this day as missed? This clears every task check-mark for the day.")) return;
+                run(() => markDayMissed(day.id));
+              }}
               className="w-full font-mono text-[11px] tracking-[0.12em] py-2.5 cursor-pointer bg-transparent transition-colors disabled:opacity-60"
               style={{ border: "1px solid var(--border-strong)", color: "var(--muted)" }}
             >
@@ -184,16 +187,30 @@ export function CheckInPanel({
             </button>
           )}
 
-          {isLate && openTasks.length > 0 && pushTargetDateKey && (
+          {isLate && openTasks.length > 0 && pushTargetDayId !== undefined && (
             <button
               disabled={isPending}
-              onClick={() => run(() => pushOpenTasksToDay(day.id, pushTargetDateKey))}
+              onClick={() => run(() => pushOpenTasksToDay(day.id, pushTargetDayId))}
               className="w-full font-mono text-[11px] tracking-[0.12em] py-2.5 cursor-pointer bg-transparent transition-colors disabled:opacity-60"
               style={{ border: "1px solid var(--border-strong)", color: "var(--muted)" }}
             >
               PUSH {openTasks.length} TASK{openTasks.length === 1 ? "" : "S"} TO {pushTargetLabel}
             </button>
           )}
+        </div>
+      )}
+
+      {!readOnly && total === 0 && day.status !== "CONFIRMED" && (
+        <div className="relative mt-auto">
+          <CornerTicks color="var(--amber)" inset={-5} />
+          <button
+            disabled={isPending}
+            onClick={() => run(() => confirmDay(day.id))}
+            className="w-full border-none font-mono text-[12px] font-bold tracking-[0.14em] py-3.5 cursor-pointer transition-colors hover:brightness-110 disabled:opacity-60"
+            style={{ background: "var(--amber)", color: "var(--panel)" }}
+          >
+            MARK REVIEW DAY DONE
+          </button>
         </div>
       )}
 

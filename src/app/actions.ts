@@ -3,7 +3,7 @@
 import { updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { fromDateKey } from "@/lib/dates";
+import { formatMonthDay } from "@/lib/dates";
 import { requireUser } from "@/lib/auth/session";
 import { applyRoadmapImport } from "@/lib/import-roadmap";
 import { parseJsonToRoadmap, parseWorkbookToRoadmap, RoadmapValidationError } from "@/lib/roadmap-io";
@@ -31,18 +31,26 @@ export async function setTaskDone(roadmapId: number, taskId: number, done: boole
 export async function confirmDay(dayId: number) {
   const user = await requireUser();
   const id = positiveId(dayId);
-  const day = await prisma.day.findFirst({ where: { id, roadmap: { ownerId: user.id } }, include: { tasks: true } });
-  if (!day) throw new Error("Day not found.");
 
-  const doneCount = day.tasks.filter((task) => task.done).length;
-  const total = day.tasks.length;
-  const status = doneCount === total && total > 0 ? "CONFIRMED" : doneCount > 0 ? "RECOVERED" : "MISSED";
-  const loggedMin = day.tasks.filter((task) => task.done).reduce((sum, task) => sum + (task.minutes ?? 0), 0);
-  await prisma.$transaction([
-    prisma.day.update({ where: { id }, data: { status, confirmedAt: new Date(), loggedMin } }),
-    prisma.roadmap.update({ where: { id: day.roadmapId }, data: { updatedAt: new Date() } }),
-  ]);
-  updateTag(roadmapCacheTag(user.id, day.roadmapId));
+  // Read the tasks and write the derived status inside one transaction so a
+  // concurrent setTaskDone cannot slip between them and leave loggedMin/status
+  // computed from a stale snapshot.
+  const roadmapId = await prisma.$transaction(async (tx) => {
+    const day = await tx.day.findFirst({ where: { id, roadmap: { ownerId: user.id } }, include: { tasks: true } });
+    if (!day) throw new Error("Day not found.");
+
+    const doneCount = day.tasks.filter((task) => task.done).length;
+    const total = day.tasks.length;
+    const status =
+      total === 0 || doneCount === total ? "CONFIRMED" : doneCount > 0 ? "RECOVERED" : "MISSED";
+    const loggedMin = day.tasks.filter((task) => task.done).reduce((sum, task) => sum + (task.minutes ?? 0), 0);
+
+    await tx.day.update({ where: { id }, data: { status, confirmedAt: new Date(), loggedMin } });
+    await tx.roadmap.update({ where: { id: day.roadmapId }, data: { updatedAt: new Date() } });
+    return day.roadmapId;
+  });
+
+  updateTag(roadmapCacheTag(user.id, roadmapId));
 }
 
 export async function markDayMissed(dayId: number) {
@@ -95,28 +103,39 @@ export async function deleteRoadmap(roadmapId: number) {
   redirect("/roadmap");
 }
 
-export async function pushOpenTasksToDay(sourceDayId: number, targetDateKey: string) {
+export async function pushOpenTasksToDay(sourceDayId: number, targetDayId: number) {
   const user = await requireUser();
-  const id = positiveId(sourceDayId);
-  const source = await prisma.day.findFirst({ where: { id, roadmap: { ownerId: user.id } }, include: { tasks: true } });
+  const sourceId = positiveId(sourceDayId);
+  const targetId = positiveId(targetDayId);
+  if (sourceId === targetId) throw new Error("Pick a different day.");
+
+  const source = await prisma.day.findFirst({ where: { id: sourceId, roadmap: { ownerId: user.id } }, include: { tasks: true } });
   if (!source) throw new Error("Source day not found.");
-  const target = await prisma.day.findUnique({
-    where: { roadmapId_date: { roadmapId: source.roadmapId, date: fromDateKey(targetDateKey) } },
-    include: { tasks: true },
-  });
-  if (!target) throw new Error("Target day not found in this roadmap.");
+  const target = await prisma.day.findFirst({ where: { id: targetId, roadmap: { ownerId: user.id } }, include: { tasks: true } });
+  if (!target) throw new Error("Target day not found.");
+  if (target.roadmapId !== source.roadmapId) throw new Error("Days belong to different roadmaps.");
 
   const openTasks = source.tasks.filter((task) => !task.done);
   if (openTasks.length === 0) return;
   const baseOrder = target.tasks.length > 0 ? Math.max(...target.tasks.map((task) => task.order)) + 1 : 0;
   const remaining = source.tasks.length - openTasks.length;
+  const targetLabel = formatMonthDay(target.date);
   const note = remaining > 0
-    ? `${openTasks.length} task${openTasks.length === 1 ? "" : "s"} pushed to ${target.date.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`
-    : `Day rescheduled to ${target.date.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`;
+    ? `${openTasks.length} task${openTasks.length === 1 ? "" : "s"} pushed to ${targetLabel}`
+    : `Day rescheduled to ${targetLabel}`;
+
+  // Tasks change days, so both days' planned-minute estimates move with them.
+  const sumMinutes = (tasks: { minutes: number | null }[]) => tasks.reduce((s, t) => s + (t.minutes ?? 0), 0);
+  const sourceEstimate = sumMinutes(source.tasks.filter((task) => task.done));
+  const targetEstimate = sumMinutes(target.tasks) + sumMinutes(openTasks);
 
   await prisma.$transaction([
     ...openTasks.map((task, index) => prisma.task.update({ where: { id: task.id }, data: { dayId: target.id, order: baseOrder + index } })),
-    prisma.day.update({ where: { id: source.id }, data: { rescheduleNote: note, status: remaining > 0 ? source.status : "MISSED" } }),
+    prisma.day.update({
+      where: { id: source.id },
+      data: { rescheduleNote: note, status: remaining > 0 ? source.status : "MISSED", estimateMin: sourceEstimate },
+    }),
+    prisma.day.update({ where: { id: target.id }, data: { estimateMin: targetEstimate } }),
     prisma.roadmap.update({ where: { id: source.roadmapId }, data: { updatedAt: new Date() } }),
   ]);
   updateTag(roadmapCacheTag(user.id, source.roadmapId));

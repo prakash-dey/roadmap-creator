@@ -8,6 +8,8 @@ export function UserMenu({ name, email }: { name: string; email: string }) {
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const rootRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const firstItemRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!open) return;
@@ -15,10 +17,14 @@ export function UserMenu({ name, email }: { name: string; email: string }) {
       if (rootRef.current && !rootRef.current.contains(e.target as Node)) setOpen(false);
     }
     function onKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") {
+        setOpen(false);
+        buttonRef.current?.focus();
+      }
     }
     document.addEventListener("pointerdown", onPointerDown);
     document.addEventListener("keydown", onKeyDown);
+    firstItemRef.current?.focus();
     return () => {
       document.removeEventListener("pointerdown", onPointerDown);
       document.removeEventListener("keydown", onKeyDown);
@@ -28,8 +34,10 @@ export function UserMenu({ name, email }: { name: string; email: string }) {
   return (
     <div ref={rootRef} className="relative shrink-0">
       <button
+        ref={buttonRef}
         type="button"
         aria-label="Account menu"
+        aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
         className="flex items-center justify-center rounded-full cursor-pointer transition-all hover:brightness-110"
@@ -43,6 +51,8 @@ export function UserMenu({ name, email }: { name: string; email: string }) {
 
       {open && (
         <div
+          role="menu"
+          aria-label="Account menu"
           className="absolute right-0 top-[calc(100%+8px)] z-50 flex w-[260px] flex-col overflow-hidden"
           style={{ border: "1px solid var(--border-strong)", background: "var(--panel)", boxShadow: "0 18px 45px rgba(0,0,0,.5)" }}
         >
@@ -59,7 +69,9 @@ export function UserMenu({ name, email }: { name: string; email: string }) {
           </div>
 
           <button
+            ref={firstItemRef}
             type="button"
+            role="menuitem"
             disabled={isPending}
             onClick={() => startTransition(() => signOut())}
             className="px-4 py-3 text-left font-mono text-[11px] tracking-[0.12em] cursor-pointer transition-colors hover:brightness-110 disabled:opacity-60"

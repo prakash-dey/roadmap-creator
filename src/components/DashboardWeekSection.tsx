@@ -46,7 +46,9 @@ export function DashboardWeekSection({
     () => ({
       totalTasks: days.reduce((s, d) => s + d.tasks.length, 0),
       confirmedDays: days.filter((d) => d.status === "CONFIRMED").length,
-      openDays: days.filter((d) => d.status === "PENDING").length,
+      openDays: days.filter(
+        (d) => d.status === "PENDING" && !(d.isPast && d.reviewOnly && d.tasks.length === 0)
+      ).length,
       lapsedDays: days.filter((d) => d.status === "MISSED" || d.status === "RECOVERED").length,
     }),
     [days]
@@ -66,9 +68,9 @@ export function DashboardWeekSection({
   }
 
   const isLate = selectedDay.isPast && selectedDay.status !== "CONFIRMED" && selectedDay.tasks.length > 0;
-  const nextDate = addDays(fromDateKey(selectedDay.dateKey), 1);
-  const pushTargetDateKey = toDateKey(nextDate);
-  const pushTargetLabel = formatMonthDay(nextDate);
+  const nextDateKey = toDateKey(addDays(fromDateKey(selectedDay.dateKey), 1));
+  const pushTargetDay = localDays.find((d) => d.dateKey === nextDateKey);
+  const pushTargetLabel = pushTargetDay ? formatMonthDay(fromDateKey(pushTargetDay.dateKey)) : undefined;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-px" style={{ background: "var(--border)", borderTop: "1px solid var(--border)" }}>
@@ -147,7 +149,7 @@ export function DashboardWeekSection({
 
       {/* On narrow screens this stacks below the content above (single grid
           column); at lg+ it becomes the right-hand side rail. */}
-      <CheckInPanel roadmapId={roadmapId} day={selectedDay} isLate={isLate} pushTargetDateKey={pushTargetDateKey} pushTargetLabel={pushTargetLabel} onTaskChange={setTaskDone} />
+      <CheckInPanel roadmapId={roadmapId} day={selectedDay} isLate={isLate} pushTargetDayId={pushTargetDay?.id} pushTargetLabel={pushTargetLabel} onTaskChange={setTaskDone} />
     </div>
   );
 }

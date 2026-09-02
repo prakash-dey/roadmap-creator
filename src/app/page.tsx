@@ -1,6 +1,9 @@
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getProgramView, listRoadmaps } from "@/lib/data";
 import { requireUser } from "@/lib/auth/session";
+import { resolveTimeZone, todayKeyInTimeZone } from "@/lib/timezone";
+import { TimeZoneSync } from "@/components/TimeZoneSync";
 import { TopBar } from "@/components/TopBar";
 import { TrailExplorer } from "@/components/TrailExplorer";
 import { StatsStrip } from "@/components/StatsStrip";
@@ -11,8 +14,13 @@ export const instant = false;
 export default async function Home({ searchParams }: { searchParams: Promise<{ roadmap?: string }> }) {
   const user = await requireUser();
   const { roadmap } = await searchParams;
+  const timeZone = resolveTimeZone((await cookies()).get("tz")?.value);
+  const todayKey = todayKeyInTimeZone(timeZone);
   const requestedId = roadmap && /^\d+$/.test(roadmap) ? Number(roadmap) : undefined;
-  const [p, roadmaps] = await Promise.all([getProgramView(user.id, requestedId), listRoadmaps(user.id)]);
+  const [p, roadmaps] = await Promise.all([
+    getProgramView(user.id, requestedId, todayKey),
+    listRoadmaps(user.id),
+  ]);
   if (!p) redirect("/roadmap");
 
   const behindDays = p.paceDays < 0 ? -p.paceDays : 0;
@@ -26,6 +34,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ r
 
   return (
     <div className="min-h-screen" style={{ background: "var(--bg)" }}>
+      <TimeZoneSync />
       <TopBar
         title={p.programTitle}
         subtitle={p.programSubtitle}

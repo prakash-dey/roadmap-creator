@@ -12,7 +12,7 @@ export default async function RoadmapPage() {
   const roadmaps = await listRoadmaps(user.id);
 
   return (
-    <div className="min-h-screen flex flex-col items-center px-6 sm:px-10 py-10 gap-8" style={{ background: "var(--bg)" }}>
+    <div className="min-h-screen flex flex-col items-center px-5 sm:px-10 py-10 gap-8" style={{ background: "var(--bg)" }}>
       <div className="w-full max-w-[560px] flex items-center justify-between">
         <Link href="/" className="font-mono text-[12px]" style={{ color: "var(--muted-2)" }}>
           ← back to trail

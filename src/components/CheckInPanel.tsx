@@ -164,10 +164,13 @@ export function CheckInPanel({
           <div className="relative mt-1.5">
             <CornerTicks color="var(--amber)" inset={-5} />
             <button
-              disabled={isPending}
+              disabled={isPending || doneCount < total}
               onClick={() => run(() => confirmDay(day.id))}
-              className="w-full border-none font-mono text-[12px] font-bold tracking-[0.14em] py-3.5 cursor-pointer transition-colors hover:brightness-110 disabled:opacity-60"
-              style={{ background: "var(--amber)", color: "var(--panel)" }}
+              className="w-full border-none font-mono text-[12px] font-bold tracking-[0.14em] py-3.5 transition-colors disabled:cursor-not-allowed enabled:cursor-pointer enabled:hover:brightness-110"
+              style={{
+                background: doneCount < total ? "var(--border-strong)" : "var(--amber)",
+                color: doneCount < total ? "var(--muted)" : "var(--panel)",
+              }}
             >
               {isLate ? `CONFIRM ${doneCount} OF ${total} · CLOSE DAY` : "CONFIRM DAY COMPLETE"}
             </button>
